@@ -1,4 +1,6 @@
 #include <math.h>
+#include <stdlib.h>
+#include <time.h>
 #include "raylib.h"
 #include "raymath.h"
 #include "window.h"
@@ -66,4 +68,13 @@ Particle spawn(int x, int y, Color color) {
 
 void draw(Particle* self) {
 	DrawPixelV(self->pos, self->color);
+}
+
+Particle* initField(int amount) {
+	srand(time(NULL));
+	Particle* particles = malloc(amount * sizeof(Particle));
+	for (int i = 0; i < amount; ++i) {
+		particles[i] = spawn(rand() % WINDOW_WIDTH, rand() % WINDOW_HEIGHT, WHITE);		
+	}
+	return particles;
 }

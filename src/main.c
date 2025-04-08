@@ -4,6 +4,8 @@
 #include <math.h>
 #include <raymath.h>
 
+#define PARTICLES_AMOUNT 20000
+
 int main(void) {
 	InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Peng");	
 	float windowDiagonal = sqrtf(WINDOW_WIDTH * WINDOW_WIDTH + WINDOW_HEIGHT * WINDOW_HEIGHT);
@@ -13,18 +15,23 @@ int main(void) {
 		.gravity = 2.0f
 	};
 
+	Particle* ps = initField(PARTICLES_AMOUNT);
 	Particle p = spawn(10, 10, RAYWHITE);
 	while (!WindowShouldClose()) {
 		float dt = GetFrameTime();
 		mouse.pos = GetMousePosition();
 
-		applyForces(&p, &mouse, windowDiagonal, dt);
-		applyVel(&p, dt);
+		for (int i = 0; i < PARTICLES_AMOUNT; ++i) {
+			applyForces(&ps[i], &mouse, windowDiagonal, dt);
+			applyVel(&ps[i], dt);
+		}
 
 		BeginDrawing();
 
 		ClearBackground(BLACK);
-		draw(&p);
+		for (int i = 0; i < PARTICLES_AMOUNT; ++i) {
+			draw(&ps[i]);
+		}
 
 		EndDrawing();
 	}

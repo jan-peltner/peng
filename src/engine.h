@@ -18,6 +18,7 @@ typedef struct {
 
 Particle spawn(int x, int y, Color color);
 void draw(Particle* self);
+Particle* initField(int amount);
 float toAttractorLength(Particle* self, Attractor* attractor);
 float toAttractorLengthNormalized(Particle* self, Attractor* attractor, float winDiag);
 Vector2 toAttractorNormalized(Particle* self, Attractor* attractor);
