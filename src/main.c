@@ -7,16 +7,17 @@
 #define PARTICLES_AMOUNT 20000
 
 int main(void) {
-	InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Peng");	
 	float windowDiagonal = sqrtf(WINDOW_WIDTH * WINDOW_WIDTH + WINDOW_HEIGHT * WINDOW_HEIGHT);
+	Particle* ps = initField(PARTICLES_AMOUNT);
+	Particle p = spawn(10, 10, RAYWHITE);
+
+	InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Peng");	
 
 	Attractor mouse = {
 		.pos = GetMousePosition(),
 		.gravity = 2.0f
 	};
 
-	Particle* ps = initField(PARTICLES_AMOUNT);
-	Particle p = spawn(10, 10, RAYWHITE);
 	while (!WindowShouldClose()) {
 		float dt = GetFrameTime();
 		mouse.pos = GetMousePosition();
