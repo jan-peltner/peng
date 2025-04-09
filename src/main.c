@@ -23,7 +23,9 @@ int main(void) {
 		mouse.pos = GetMousePosition();
 
 		for (int i = 0; i < PARTICLES_AMOUNT; ++i) {
-			applyForces(&ps[i], &mouse, windowDiagonal, dt);
+			applyAttractorForce(&ps[i], &mouse, windowDiagonal);
+			applyFrictionForce(&ps[i]);
+			applyAccel(&ps[i], dt);
 			applyVel(&ps[i], dt);
 		}
 

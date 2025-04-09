@@ -33,15 +33,8 @@ void applyVel(Particle* self, float dt) {
 	self->pos.y = fmaxf(0.0f, fminf(newY, WINDOW_HEIGHT - 1));
 }
 
-void applyForces(Particle* self, Attractor* attractor, float winDiag, float dt) {
-	Vector2 direction = toAttractorNormalized(self, attractor);
-	float normalizedDist = toAttractorLengthNormalized(self, attractor, winDiag);
-	float gravityForceMag = attractor->gravity / ((normalizedDist * normalizedDist) + EPSILON);
-	Vector2 gravity = Vector2Scale(direction, gravityForceMag);
-
-	Vector2 friction = Vector2Scale(self->vel, -FRICTION_SCALAR);
-	Vector2 acceleration = Vector2Add(gravity, friction);
-	Vector2 accelerationDt = Vector2Scale(acceleration, dt);
+void applyAccel(Particle* self, float dt) {
+	Vector2 accelerationDt = Vector2Scale(self->accel, dt);
 	Vector2 newVel = Vector2Add(self->vel, accelerationDt); 
 	float newVelLen = Vector2Length(newVel);
 
@@ -50,19 +43,31 @@ void applyForces(Particle* self, Attractor* attractor, float winDiag, float dt) 
 	} else {
 		self->vel = newVel;		
 	}
+	self->accel = Vector2Zero();
+}
+
+void applyAttractorForce(Particle* self, Attractor* attractor, float winDiag) {
+	Vector2 direction = toAttractorNormalized(self, attractor);
+	float normalizedDist = toAttractorLengthNormalized(self, attractor, winDiag);
+	float gravityForceMag = attractor->gravity / ((normalizedDist * normalizedDist) + EPSILON);
+	Vector2 gravity = Vector2Scale(direction, gravityForceMag);
+	self->accel = Vector2Add(self->accel, gravity);
+}
+
+void applyFrictionForce(Particle *self) {
+	Vector2 friction = Vector2Scale(self->vel, -FRICTION_SCALAR);
+	self->accel = Vector2Add(self->accel, friction);
 }
 
 Particle spawn(int x, int y, Color color) {
 	return (Particle) {
 		.pos = (Vector2) {
-			.x = x,
-			.y = y
+			x,
+			y
 		},
-		.vel = (Vector2) {
-			.x = 0,
-			.y = 0
-		},
-		.color = color
+		.vel = Vector2Zero(),
+		.accel = Vector2Zero(),
+		color
 	};
 }
 
