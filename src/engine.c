@@ -1,6 +1,8 @@
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
+#include <stdio.h>
 #include "raylib.h"
 #include "raymath.h"
 #include "window.h"
@@ -75,11 +77,41 @@ void draw(Particle* self) {
 	DrawPixelV(self->pos, self->color);
 }
 
-Particle* initField(int amount) {
+void clearOccupancyMap(char* map) {
+	memset(map, 0, WINDOW_AREA);
+}
+
+char* initOccupancyMap(int size) {
+	char* map = malloc(size);
+
+	if (map == NULL) {
+		fprintf(stderr, "malloc failed");
+		exit(1);
+	}
+
+	clearOccupancyMap(map);
+	return map;
+}
+
+void setOccupancyMap(Particle* p, char* map) {
+	map[(int)p->pos.y * WINDOW_WIDTH + (int)p->pos.x] = 1;
+}
+
+Particle* initField(int amount, char* occupancyMap) {
 	srand(time(NULL));
 	Particle* particles = malloc(amount * sizeof(Particle));
+
+	if (particles == NULL) {
+		fprintf(stderr, "malloc failed");
+		exit(1);
+	}
+
 	for (int i = 0; i < amount; ++i) {
-		particles[i] = spawn(rand() % WINDOW_WIDTH, rand() % WINDOW_HEIGHT, WHITE);		
+		int x = rand() % WINDOW_WIDTH;
+		int y = rand() % WINDOW_HEIGHT;
+		particles[i] = spawn(x, y, RAYWHITE);		
+		occupancyMap[y * WINDOW_WIDTH + x] = 1;
 	}
 	return particles;
 }
+
