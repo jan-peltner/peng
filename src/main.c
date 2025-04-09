@@ -4,10 +4,11 @@
 #include <math.h>
 #include <raymath.h>
 
-#define PARTICLES_AMOUNT 20000
+#define PARTICLES_AMOUNT 30000
 
 int main(void) {
 	float windowDiagonal = sqrtf(WINDOW_WIDTH * WINDOW_WIDTH + WINDOW_HEIGHT * WINDOW_HEIGHT);
+	int fps;
 	Particle* ps = initField(PARTICLES_AMOUNT);
 	Particle p = spawn(10, 10, RAYWHITE);
 
@@ -20,8 +21,10 @@ int main(void) {
 
 	while (!WindowShouldClose()) {
 		float dt = GetFrameTime();
+		fps = GetFPS();
 		mouse.pos = GetMousePosition();
-
+			
+		// physics updates
 		for (int i = 0; i < PARTICLES_AMOUNT; ++i) {
 			applyAttractorForce(&ps[i], &mouse, windowDiagonal);
 			applyFrictionForce(&ps[i]);
@@ -32,12 +35,17 @@ int main(void) {
 		BeginDrawing();
 
 		ClearBackground(BLACK);
+
+		// particle rendering
 		for (int i = 0; i < PARTICLES_AMOUNT; ++i) {
 			draw(&ps[i]);
 		}
 
+		DrawText(TextFormat("FPS: %d", fps), 10, 10, 18, RAYWHITE);
+
 		EndDrawing();
 	}
+
 
 	CloseWindow();
 	return 0;
