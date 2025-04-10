@@ -25,7 +25,7 @@ void toggleAttractors();
 void toggleAttractorForce();
 void toggleFrictionForce();
 void toggleRepellentForce();
-void runPhysicsUpdate(float dt); 
+void runUpdate(float dt);
 
 // rendering
 

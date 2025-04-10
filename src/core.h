@@ -2,12 +2,14 @@
 	
 #define PENG_CORE_H
 
+#include <pthread.h>
 #include <raylib.h>
 #include <stddef.h>
 
 #define FRICTION_SCALAR 0.98f
 #define REPELLING_RADIUS 10
 #define VELOCITY_VEC_MAX_LENGTH 120.0f
+#define THREAD_COUNT 6
 
 typedef struct {
 	Vector2 pos; 
@@ -22,25 +24,38 @@ typedef struct {
 	bool isActive;
 } Attractor;
 
+typedef struct {
+	size_t start;
+	size_t end;
+	float dt;
+} ThreadData;
+
 static struct {
+	// window & system
 	int winWidth;
 	int winHeight;
 	int winArea;
 	int winDiag;
 	size_t frameCounter;
+	// particles
 	Particle* particles;
 	size_t particleCount;
 	size_t particleCap;
+	// attractors
 	Attractor* attractors;
 	Attractor* mouseAttractor;
 	size_t attractorCount;
 	size_t attractorCap;
 	char* oMap;
+	// config
 	bool useAttractorForce;
 	bool useFrictionForce;
 	bool useRepellentForce;
 	bool useMouseAttractor;
 	bool isPhysicsPaused;
+	// threads
+	pthread_t threads[THREAD_COUNT];
+	ThreadData threadData[THREAD_COUNT];
 } ENGINE;
 
 #endif // PENG_CORE_H

@@ -1,3 +1,4 @@
+#include <pthread.h>
 #include <string.h>
 #include <time.h>
 #include <raylib.h>
@@ -218,18 +219,14 @@ void toggleRepellentForce() {
 	ENGINE.useRepellentForce = !ENGINE.useRepellentForce;
 }
 
-void runPhysicsUpdate(float dt) {
-		oMapClear(ENGINE.oMap);
+void* runMtPhysUpdate(void* arg) {
+		ThreadData* tData = (ThreadData*)arg;
 
-		if (ENGINE.useMouseAttractor) {
-			ENGINE.mouseAttractor->pos = GetMousePosition();
-		}
-
-		for (size_t i = 0; i < ENGINE.particleCount; ++i) {
+		for (size_t i = tData->start; i < tData->end; ++i) {
 			oMapSet(&ENGINE.particles[i], ENGINE.oMap);	
 		}
 
-		for (size_t i = 0; i < ENGINE.particleCount; ++i) {
+		for (size_t i = tData->start; i < tData->end; ++i) {
 			if (ENGINE.useAttractorForce) {
 				for (size_t j = 0; j < ENGINE.attractorCount; ++j) {
 					applyAttractorForce(&ENGINE.particles[i], &ENGINE.attractors[j], ENGINE.winDiag);
@@ -244,12 +241,33 @@ void runPhysicsUpdate(float dt) {
 				applyFrictionForce(&ENGINE.particles[i]);
 			}
 
-			applyAccel(&ENGINE.particles[i], dt);
-			applyVel(&ENGINE.particles[i], dt);
+			applyAccel(&ENGINE.particles[i], tData->dt);
+			applyVel(&ENGINE.particles[i], tData->dt);
 		}
-		
-		++ENGINE.frameCounter;
+	return NULL;		
 } 
+
+void runUpdate(float dt) {
+	size_t  particlesPerThread = ENGINE.particleCount / THREAD_COUNT;
+	oMapClear(ENGINE.oMap);
+
+	if (ENGINE.useMouseAttractor) {
+		ENGINE.mouseAttractor->pos = GetMousePosition();
+	}
+
+	for (size_t t = 0; t < THREAD_COUNT; ++t) {
+		ENGINE.threadData[t].start = t * particlesPerThread;
+		ENGINE.threadData[t].end = (t == THREAD_COUNT - 1) ? ENGINE.particleCount : (t + 1) * particlesPerThread;
+		ENGINE.threadData[t].dt = dt; 
+		pthread_create(&ENGINE.threads[t], NULL, runMtPhysUpdate, &ENGINE.threadData[t]);
+	}	
+
+	++ENGINE.frameCounter;
+
+	for (size_t t = 0; t < THREAD_COUNT; ++t) {
+		pthread_join(ENGINE.threads[t], NULL);
+	}
+}
 
 void drawParticles() {
 	for (size_t i = 0; i < ENGINE.particleCount; ++i) {

@@ -1,8 +1,8 @@
 #include "raylib.h"
 #include "peng.h"
 
-#define WINDOW_WIDTH 1980 
-#define WINDOW_HEIGHT 1080
+#define WINDOW_WIDTH 1440 
+#define WINDOW_HEIGHT 900 
 
 int main(void) {
 	int fps;
@@ -12,7 +12,7 @@ int main(void) {
 	startPeng(
 		WINDOW_WIDTH, 
 		WINDOW_HEIGHT, 
-		10000, 
+		30000, 
 		10 
 	);
 
@@ -31,7 +31,7 @@ int main(void) {
 			toggleAttractorForce();
 		}
 
-		runPhysicsUpdate(dt);		
+		runUpdate(dt);
 
 		BeginDrawing();
 
