@@ -61,6 +61,36 @@ void applyFrictionForce(Particle *self) {
 	self->accel = Vector2Add(self->accel, friction);
 }
 
+void applyRepellentForce(Particle *self, char* oMap) {
+	bool forceApplied = false; 
+	int cx = (int)self->pos.x;
+	int cy = (int)self->pos.y;
+
+	for (int col = cx - REPELLING_RADIUS + 1; col <= cx + REPELLING_RADIUS; ++col) {
+		for (int row = cy - REPELLING_RADIUS + 1; row <= cy + REPELLING_RADIUS; ++row) {
+			// INFO: forceApplied is a hacky way to gain performance
+			if (forceApplied) return;
+			if(col > 0 && col < WINDOW_WIDTH && row > 0 && row < WINDOW_HEIGHT) {
+				if (col == cx && row == cy) continue;
+				Vector2 delta = {
+					.x = (float)(cx - col),
+					.y = (float)(cy - row)
+				};
+				float distSq = delta.x * delta.x + delta.y * delta.y;
+				if (distSq <= REPELLING_RADIUS * REPELLING_RADIUS) {
+					int idx = row * WINDOW_WIDTH + col;
+					if (oMap[idx] == 1) {
+						float invDistSq = 1.0f / distSq;
+						Vector2 force = Vector2Scale(delta, invDistSq);
+						self->accel = Vector2Add(self->accel, force);
+						forceApplied = true;
+					}
+				}
+			}
+		}
+	}		
+}
+
 Particle spawn(int x, int y, Color color) {
 	return (Particle) {
 		.pos = (Vector2) {
@@ -85,7 +115,7 @@ char* initOccupancyMap(int size) {
 	char* map = malloc(size);
 
 	if (map == NULL) {
-		fprintf(stderr, "malloc failed");
+		fprintf(stderr, "malloc failed @ initOccupancyMap");
 		exit(1);
 	}
 
@@ -97,12 +127,12 @@ void setOccupancyMap(Particle* p, char* map) {
 	map[(int)p->pos.y * WINDOW_WIDTH + (int)p->pos.x] = 1;
 }
 
-Particle* initField(int amount, char* occupancyMap) {
+Particle* initField(int amount, char* oMap) {
 	srand(time(NULL));
 	Particle* particles = malloc(amount * sizeof(Particle));
 
 	if (particles == NULL) {
-		fprintf(stderr, "malloc failed");
+		fprintf(stderr, "malloc failed @ initField");
 		exit(1);
 	}
 
@@ -110,7 +140,7 @@ Particle* initField(int amount, char* occupancyMap) {
 		int x = rand() % WINDOW_WIDTH;
 		int y = rand() % WINDOW_HEIGHT;
 		particles[i] = spawn(x, y, RAYWHITE);		
-		occupancyMap[y * WINDOW_WIDTH + x] = 1;
+		oMap[y * WINDOW_WIDTH + x] = 1;
 	}
 	return particles;
 }

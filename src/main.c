@@ -4,7 +4,7 @@
 #include <math.h>
 #include <raymath.h>
 
-#define PARTICLES_AMOUNT 30000
+#define PARTICLES_AMOUNT 10000 
 
 int main(void) {
 	float windowDiagonal = sqrtf(WINDOW_WIDTH * WINDOW_WIDTH + WINDOW_HEIGHT * WINDOW_HEIGHT);
@@ -30,6 +30,7 @@ int main(void) {
 		for (int i = 0; i < PARTICLES_AMOUNT; ++i) {
 			applyAttractorForce(&ps[i], &mouse, windowDiagonal);
 			applyFrictionForce(&ps[i]);
+			applyRepellentForce(&ps[i], occupancyMap);
 
 			applyAccel(&ps[i], dt);
 			applyVel(&ps[i], dt);
