@@ -70,7 +70,7 @@ void applyRepellentForce(Particle *self, char* oMap) {
 	for (int col = cx - REPELLING_RADIUS + 1; col <= cx + REPELLING_RADIUS; ++col) {
 		for (int row = cy - REPELLING_RADIUS + 1; row <= cy + REPELLING_RADIUS; ++row) {
 			// INFO: forceApplied is a hacky way to gain performance
-			if (forceApplied) return;
+			// if (forceApplied) return;
 			if(col > 0 && col < ENGINE.winWidth && row > 0 && row < ENGINE.winHeight) {
 				if (col == cx && row == cy) continue;
 				Vector2 delta = {
@@ -82,8 +82,7 @@ void applyRepellentForce(Particle *self, char* oMap) {
 					int idx = row * ENGINE.winWidth + col;
 					if (oMap[idx] == 1) {
 						float invDistSq = 1.0f / distSq;
-						// we really only scale by invDist since we divide by dist to get the normalized delta
-						Vector2 force = Vector2Scale(delta, invDistSq);
+						Vector2 force = Vector2Scale(delta, invDistSq * 3.33);
 						self->accel = Vector2Add(self->accel, force);
 						forceApplied = true;
 					}
@@ -107,6 +106,7 @@ void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount)
 	ENGINE.winHeight = winH;
 	ENGINE.winArea = winW * winH;
 	ENGINE.winDiag = (int)(sqrtf(winW * winW + winH * winH) + 0.5f);
+	ENGINE.frameCounter = 0;
 
 	srand(time(NULL));
 
@@ -235,9 +235,11 @@ void runPhysicsUpdate(float dt) {
 					applyAttractorForce(&ENGINE.particles[i], &ENGINE.attractors[j], ENGINE.winDiag);
 				}
 			}
+
 			if (ENGINE.useRepellentForce) {
 				applyRepellentForce(&ENGINE.particles[i], ENGINE.oMap);
 			}
+
 			if (ENGINE.useFrictionForce) {
 				applyFrictionForce(&ENGINE.particles[i]);
 			}
@@ -245,6 +247,8 @@ void runPhysicsUpdate(float dt) {
 			applyAccel(&ENGINE.particles[i], dt);
 			applyVel(&ENGINE.particles[i], dt);
 		}
+		
+		++ENGINE.frameCounter;
 } 
 
 void drawParticles() {

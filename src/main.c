@@ -1,7 +1,7 @@
 #include "raylib.h"
 #include "peng.h"
 
-#define WINDOW_WIDTH 1920
+#define WINDOW_WIDTH 1980 
 #define WINDOW_HEIGHT 1080
 
 int main(void) {
@@ -12,14 +12,15 @@ int main(void) {
 	startPeng(
 		WINDOW_WIDTH, 
 		WINDOW_HEIGHT, 
-		1000, 
+		10000, 
 		10 
 	);
 
 	toggleAttractorForce();
 	
-	spawnParticleAt(100, 100, RAYWHITE);
-	spawnParticleAt(100, 105, RAYWHITE);
+	// spawnParticleAt(100, 100, RAYWHITE);
+	// spawnParticleAt(100, 101, RAYWHITE);
+	spawnParticlesRandom();
 	createMouseAttractor(2.0f);
 
 	while (!WindowShouldClose()) {

@@ -6,8 +6,7 @@
 #include <stddef.h>
 
 #define FRICTION_SCALAR 0.98f
-#define REPELLING_SCALAR 2.0f
-#define REPELLING_RADIUS 100
+#define REPELLING_RADIUS 10
 #define VELOCITY_VEC_MAX_LENGTH 120.0f
 
 typedef struct {
@@ -28,6 +27,7 @@ static struct {
 	int winHeight;
 	int winArea;
 	int winDiag;
+	size_t frameCounter;
 	Particle* particles;
 	size_t particleCount;
 	size_t particleCap;
