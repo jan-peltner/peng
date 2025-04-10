@@ -220,11 +220,17 @@ void runPhysicsUpdate(float dt) {
 		}
 
 		for (size_t i = 0; i < ENGINE.particleCount; ++i) {
-			for (size_t j = 0; j < ENGINE.attractorCount; ++j) {
-				applyAttractorForce(&ENGINE.particles[i], &ENGINE.attractors[j], ENGINE.winDiag);
+			if (ENGINE.useAttractorForce) {
+				for (size_t j = 0; j < ENGINE.attractorCount; ++j) {
+					applyAttractorForce(&ENGINE.particles[i], &ENGINE.attractors[j], ENGINE.winDiag);
+				}
 			}
-			applyFrictionForce(&ENGINE.particles[i]);
-			applyRepellentForce(&ENGINE.particles[i], ENGINE.oMap);
+			if (ENGINE.useRepellentForce) {
+				applyRepellentForce(&ENGINE.particles[i], ENGINE.oMap);
+			}
+			if (ENGINE.useFrictionForce) {
+				applyFrictionForce(&ENGINE.particles[i]);
+			}
 
 			applyAccel(&ENGINE.particles[i], dt);
 			applyVel(&ENGINE.particles[i], dt);
