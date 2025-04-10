@@ -5,9 +5,15 @@
 #include <raylib.h>
 #include <stddef.h>
 
+typedef struct {
+	bool useAttractorForce;
+	bool useFrictionForce;
+	bool useRepellentForce;
+} ForcesCfg;
+
 // init & destroy global context 
 
-void startPeng(int winWidth, int winHeight, size_t particlesCount, size_t attractorCount);
+void startPeng(int winWidth, int winHeight, size_t particlesCount, size_t attractorCount, ForcesCfg cfg);
 void stopPeng();
 
 // particles

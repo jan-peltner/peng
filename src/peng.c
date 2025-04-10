@@ -101,7 +101,7 @@ void oMapSet(Particle* p, char* oMap) {
 	oMap[(int)p->pos.y * ENGINE.winWidth + (int)p->pos.x] = 1;
 }
 
-void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount) {
+void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount, ForcesCfg cfg) {
 	// window
 	ENGINE.winWidth = winW;
 	ENGINE.winHeight = winH;
@@ -148,9 +148,9 @@ void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount)
 	oMapClear(ENGINE.oMap);
 
 	// config
-	ENGINE.useFrictionForce = true;
-	ENGINE.useAttractorForce = true;
-	ENGINE.useRepellentForce = true;
+	ENGINE.useFrictionForce = cfg.useFrictionForce;
+	ENGINE.useAttractorForce = cfg.useAttractorForce;
+	ENGINE.useRepellentForce = cfg.useRepellentForce;
 	ENGINE.isPhysicsPaused = false;
 }
 

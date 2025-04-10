@@ -7,7 +7,7 @@
 
 #define FRICTION_SCALAR 0.98f
 #define REPELLING_SCALAR 2.0f
-#define REPELLING_RADIUS 20
+#define REPELLING_RADIUS 100
 #define VELOCITY_VEC_MAX_LENGTH 120.0f
 
 typedef struct {

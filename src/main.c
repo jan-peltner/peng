@@ -9,8 +9,20 @@ int main(void) {
 
 	InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Peng");	
 
-	startPeng(WINDOW_WIDTH, WINDOW_HEIGHT, 1000, 10);
-	spawnParticlesRandom();
+	startPeng(
+		WINDOW_WIDTH, 
+		WINDOW_HEIGHT, 
+		1000, 
+		10, 
+		(ForcesCfg) {
+		.useRepellentForce = true,
+		.useAttractorForce = true,
+		.useFrictionForce = true
+		}
+	);
+
+	spawnParticleAt(100, 100, RAYWHITE);
+	spawnParticleAt(100, 200, RAYWHITE);
 	createMouseAttractor(2.0f);
 
 	while (!WindowShouldClose()) {
