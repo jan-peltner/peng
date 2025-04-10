@@ -12,7 +12,7 @@ int main(void) {
 	startPeng(
 		WINDOW_WIDTH, 
 		WINDOW_HEIGHT, 
-		30000, 
+		20000, 
 		10 
 	);
 

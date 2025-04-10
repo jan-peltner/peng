@@ -9,11 +9,12 @@
 #define FRICTION_SCALAR 0.98f
 #define REPELLING_RADIUS 10
 #define VELOCITY_VEC_MAX_LENGTH 120.0f
-#define THREAD_COUNT 6
+#define THREAD_COUNT 12
 
 typedef struct {
 	Vector2 pos; 
-	Vector2 vel; 
+	Vector2 vel;
+	float velLen;
 	Vector2 accel;
 	Color color;
 } Particle;
@@ -41,6 +42,8 @@ static struct {
 	Particle* particles;
 	size_t particleCount;
 	size_t particleCap;
+	Color slowColor;
+	Color fastColor;
 	// attractors
 	Attractor* attractors;
 	Attractor* mouseAttractor;

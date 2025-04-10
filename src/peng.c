@@ -43,8 +43,10 @@ void applyAccel(Particle* self, float dt) {
 
 	if (newVelLen > VELOCITY_VEC_MAX_LENGTH) {
 		self->vel = Vector2Scale(newVel, VELOCITY_VEC_MAX_LENGTH / newVelLen);
+		self->velLen = VELOCITY_VEC_MAX_LENGTH;
 	} else {
 		self->vel = newVel;		
+		self->velLen = newVelLen;
 	}
 	self->accel = Vector2Zero();
 }
@@ -123,6 +125,21 @@ void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount)
 	ENGINE.particleCap = particlesCount;
 	ENGINE.particleCount = 0;
 
+	// default particle colors
+	ENGINE.fastColor = (Color) {
+		.r = 253,
+		.g = 231,
+		.b = 76,
+		.a = 255
+	};
+	ENGINE.slowColor = (Color) {
+		.r = 255,
+		.g = 255,
+		.b = 255,
+		.a = 255
+	};
+
+
 	// alloc attractors
 	Attractor* attractors = malloc(attractorCount * sizeof(Attractor));
 
@@ -161,7 +178,7 @@ void stopPeng() {
 	free(ENGINE.particles);
 }
 
-void spawnParticleAt(size_t x, size_t y, Color color) {
+void spawnParticleAt(size_t x, size_t y) {
 	if (ENGINE.particleCount >= ENGINE.particleCap) return;
 	
 	ENGINE.particles[ENGINE.particleCount] = (Particle) {
@@ -171,7 +188,6 @@ void spawnParticleAt(size_t x, size_t y, Color color) {
 		},
 		.vel = Vector2Zero(),
 		.accel = Vector2Zero(),
-		.color = color
 	};
 
 	++ENGINE.particleCount;
@@ -183,7 +199,7 @@ void spawnParticlesRandom() {
 	for (size_t i = 0; i < left; ++i) {
 		size_t x = rand() % ENGINE.winWidth;
 		size_t y = rand() % ENGINE.winHeight;
-		spawnParticleAt(x, y, RAYWHITE);		
+		spawnParticleAt(x, y);		
 		ENGINE.oMap[y * ENGINE.winWidth + x] = 1;
 	}
 }
@@ -272,6 +288,6 @@ void runUpdate(float dt) {
 void drawParticles() {
 	for (size_t i = 0; i < ENGINE.particleCount; ++i) {
 		Particle p = ENGINE.particles[i];
-		DrawPixelV(p.pos, p.color);
+		DrawPixelV(p.pos, ColorLerp(ENGINE.slowColor, ENGINE.fastColor, p.velLen / VELOCITY_VEC_MAX_LENGTH));
 	}
 }

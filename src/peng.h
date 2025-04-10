@@ -12,7 +12,7 @@ void stopPeng();
 
 // particles
 
-void spawnParticleAt(size_t x, size_t y, Color color);
+void spawnParticleAt(size_t x, size_t y);
 void spawnParticlesRandom();
 
 // attractors
