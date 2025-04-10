@@ -291,3 +291,11 @@ void drawParticles() {
 		DrawPixelV(p.pos, ColorLerp(ENGINE.slowColor, ENGINE.fastColor, p.velLen / VELOCITY_VEC_MAX_LENGTH));
 	}
 }
+
+void setSlowParticleColor(Color color) {
+	ENGINE.slowColor = color;
+}
+
+void setFastParticleColor(Color color) {
+	ENGINE.fastColor = color;
+}

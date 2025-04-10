@@ -14,6 +14,8 @@ void stopPeng();
 
 void spawnParticleAt(size_t x, size_t y);
 void spawnParticlesRandom();
+void setSlowParticleColor(Color color);
+void setFastParticleColor(Color color);
 
 // attractors
 
