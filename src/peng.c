@@ -101,7 +101,7 @@ void oMapSet(Particle* p, char* oMap) {
 	oMap[(int)p->pos.y * ENGINE.winWidth + (int)p->pos.x] = 1;
 }
 
-void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount, ForcesCfg cfg) {
+void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount) {
 	// window
 	ENGINE.winWidth = winW;
 	ENGINE.winHeight = winH;
@@ -148,9 +148,9 @@ void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount,
 	oMapClear(ENGINE.oMap);
 
 	// config
-	ENGINE.useFrictionForce = cfg.useFrictionForce;
-	ENGINE.useAttractorForce = cfg.useAttractorForce;
-	ENGINE.useRepellentForce = cfg.useRepellentForce;
+	ENGINE.useFrictionForce = true;
+	ENGINE.useAttractorForce = true;
+	ENGINE.useRepellentForce = true;
 	ENGINE.isPhysicsPaused = false;
 }
 
@@ -206,6 +206,16 @@ void toggleAttractors() {
 	for (size_t i = 0; i < ENGINE.attractorCount; ++i) {
 		ENGINE.attractors[i].isActive = !ENGINE.attractors[i].isActive;
 	}
+}
+
+void toggleAttractorForce() {
+	ENGINE.useAttractorForce = !ENGINE.useAttractorForce;
+}
+void toggleFrictionForce() {
+	ENGINE.useFrictionForce = !ENGINE.useFrictionForce;
+}
+void toggleRepellentForce() {
+	ENGINE.useRepellentForce = !ENGINE.useRepellentForce;
 }
 
 void runPhysicsUpdate(float dt) {

@@ -13,16 +13,13 @@ int main(void) {
 		WINDOW_WIDTH, 
 		WINDOW_HEIGHT, 
 		1000, 
-		10, 
-		(ForcesCfg) {
-		.useRepellentForce = true,
-		.useAttractorForce = true,
-		.useFrictionForce = true
-		}
+		10 
 	);
 
+	toggleAttractorForce();
+	
 	spawnParticleAt(100, 100, RAYWHITE);
-	spawnParticleAt(100, 200, RAYWHITE);
+	spawnParticleAt(100, 105, RAYWHITE);
 	createMouseAttractor(2.0f);
 
 	while (!WindowShouldClose()) {
@@ -30,7 +27,7 @@ int main(void) {
 		fps = GetFPS();
 
 		if (IsKeyPressed(KEY_SPACE)) {
-			toggleAttractors();
+			toggleAttractorForce();
 		}
 
 		runPhysicsUpdate(dt);		
