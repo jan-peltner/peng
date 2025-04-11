@@ -9,17 +9,17 @@
 #include "core.h"
 #include "peng.h"
 
-float toAttractorLength(Particle* self, Attractor* attractor) {
+float toAttractorLength(const Particle* self, Attractor* attractor) {
 	Vector2 delta = Vector2Subtract(attractor->pos, self->pos);
 	return sqrtf(delta.x * delta.x + delta.y * delta.y);
 }
 
-float toAttractorLengthNormalized(Particle* self, Attractor* attractor, float winDiag) {
+float toAttractorLengthNormalized(const Particle* self, Attractor* attractor, float winDiag) {
 	Vector2 delta = Vector2Subtract(attractor->pos, self->pos);
 	return sqrtf(delta.x * delta.x + delta.y * delta.y) / winDiag;
 }
 
-Vector2 toAttractorNormalized(Particle* self, Attractor* attractor) {
+Vector2 toAttractorNormalized(const Particle* self, Attractor* attractor) {
 	Vector2 delta = Vector2Subtract(attractor->pos, self->pos);
 	float length = sqrtf(delta.x * delta.x + delta.y * delta.y);
 	return (Vector2) {
