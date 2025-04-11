@@ -95,6 +95,10 @@ void applyRepellentForce(Particle *self, char* oMap) {
 	}		
 }
 
+void computeColor(Particle* self) {
+	self->color = ColorLerp(ENGINE.slowColor, ENGINE.fastColor, self->velLen / VELOCITY_VEC_MAX_LENGTH);
+}
+
 void oMapClear(char* oMap) {
 	memset(oMap, 0, ENGINE.winArea);
 }
@@ -236,30 +240,32 @@ void toggleRepellentForce() {
 }
 
 void* runMtPhysUpdate(void* arg) {
-		ThreadData* tData = (ThreadData*)arg;
+	ThreadData* tData = (ThreadData*)arg;
 
-		for (size_t i = tData->start; i < tData->end; ++i) {
-			oMapSet(&ENGINE.particles[i], ENGINE.oMap);	
+	for (size_t i = tData->start; i < tData->end; ++i) {
+		oMapSet(&ENGINE.particles[i], ENGINE.oMap);	
+	}
+
+	for (size_t i = tData->start; i < tData->end; ++i) {
+		if (ENGINE.useAttractorForce) {
+			for (size_t j = 0; j < ENGINE.attractorCount; ++j) {
+				applyAttractorForce(&ENGINE.particles[i], &ENGINE.attractors[j], ENGINE.winDiag);
+			}
 		}
 
-		for (size_t i = tData->start; i < tData->end; ++i) {
-			if (ENGINE.useAttractorForce) {
-				for (size_t j = 0; j < ENGINE.attractorCount; ++j) {
-					applyAttractorForce(&ENGINE.particles[i], &ENGINE.attractors[j], ENGINE.winDiag);
-				}
-			}
-
-			if (ENGINE.useRepellentForce) {
-				applyRepellentForce(&ENGINE.particles[i], ENGINE.oMap);
-			}
-
-			if (ENGINE.useFrictionForce) {
-				applyFrictionForce(&ENGINE.particles[i]);
-			}
-
-			applyAccel(&ENGINE.particles[i], tData->dt);
-			applyVel(&ENGINE.particles[i], tData->dt);
+		if (ENGINE.useFrictionForce) {
+			applyFrictionForce(&ENGINE.particles[i]);
 		}
+
+		if (ENGINE.useRepellentForce) {
+			applyRepellentForce(&ENGINE.particles[i], ENGINE.oMap);
+		}
+
+		applyAccel(&ENGINE.particles[i], tData->dt);
+		applyVel(&ENGINE.particles[i], tData->dt);
+		computeColor(&ENGINE.particles[i]);
+	}
+
 	return NULL;		
 } 
 
@@ -278,17 +284,17 @@ void runUpdate(float dt) {
 		pthread_create(&ENGINE.threads[t], NULL, runMtPhysUpdate, &ENGINE.threadData[t]);
 	}	
 
-	++ENGINE.frameCounter;
-
 	for (size_t t = 0; t < THREAD_COUNT; ++t) {
 		pthread_join(ENGINE.threads[t], NULL);
 	}
+
+	++ENGINE.frameCounter;
 }
 
 void drawParticles() {
 	for (size_t i = 0; i < ENGINE.particleCount; ++i) {
 		Particle p = ENGINE.particles[i];
-		DrawPixelV(p.pos, ColorLerp(ENGINE.slowColor, ENGINE.fastColor, p.velLen / VELOCITY_VEC_MAX_LENGTH));
+		DrawPixelV(p.pos, p.color);
 	}
 }
 
