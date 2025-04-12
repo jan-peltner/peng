@@ -17,12 +17,13 @@ int main(void) {
 	);
 
 	toggleAttractorForce();
-	// setSlowParticleColor(BLACK);
+	setSlowParticleColor(BLACK);
 	
 	// spawnParticleAt(100, 100, RAYWHITE);
 	// spawnParticleAt(100, 101, RAYWHITE);
 	spawnParticlesRandom();
 	createMouseAttractor(2.0f, 0.33f);
+	DisableCursor();
 
 	while (!WindowShouldClose()) {
 		float dt = GetFrameTime();

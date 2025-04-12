@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CFLAGS="-Wall -Wextra"
-SRC="src/main.c src/peng/peng.c"
+SRC="src/example.c src/peng/peng.c"
 OUT="-o bin/peng"
 LIBS="-lraylib -lm"
 
