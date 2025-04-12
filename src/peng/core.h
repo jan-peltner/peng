@@ -2,14 +2,14 @@
 	
 #define PENG_CORE_H
 
-#include <pthread.h>
 #include <raylib.h>
 #include <stddef.h>
+#include "threadpool.h"
 
 #define FRICTION_SCALAR 0.98f
 #define REPELLING_RADIUS 10
 #define VELOCITY_VEC_MAX_LENGTH 120.0f
-#define THREAD_COUNT 12
+#define THREAD_COUNT 8
 
 typedef struct {
 	Vector2 pos; 
@@ -62,7 +62,7 @@ static struct {
 	bool useMouseAttractor;
 	bool isPhysicsPaused;
 	// threads
-	pthread_t threads[THREAD_COUNT];
+	WorkerThread workers[THREAD_COUNT];
 	ThreadData threadData[THREAD_COUNT];
 } ENGINE;
 

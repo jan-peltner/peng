@@ -38,7 +38,7 @@ int main(void) {
 	createMouseAttractor(2.0f, 0.33f);
 	toggleAttractorForce();
 
-	DisableCursor();
+	// DisableCursor();
 
 	while (!WindowShouldClose()) {
 		float dt = GetFrameTime();
@@ -47,7 +47,6 @@ int main(void) {
 		if (IsKeyPressed(KEY_SPACE)) {
 			toggleAttractorForce();
 		}
-
 		runUpdate(dt);
 
 		BeginDrawing();
