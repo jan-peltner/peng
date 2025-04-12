@@ -9,7 +9,7 @@
 #define FRICTION_SCALAR 0.98f
 #define REPELLING_RADIUS 10
 #define VELOCITY_VEC_MAX_LENGTH 120.0f
-#define THREAD_COUNT 8
+#define THREAD_COUNT 12
 
 typedef struct {
 	Vector2 pos; 
