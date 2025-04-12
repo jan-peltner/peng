@@ -99,7 +99,7 @@ void applyRepellentForce(Particle *self, char* oMap) {
 }
 
 void computeColor(Particle* self) {
-	self->color = ColorLerp(ENGINE.slowColor, ENGINE.fastColor, self->velLen / VELOCITY_VEC_MAX_LENGTH);
+	self->lerpedColor = ColorLerp(self->slowColor, self->fastColor, self->velLen / VELOCITY_VEC_MAX_LENGTH);
 }
 
 void oMapClear(char* oMap) {
@@ -133,18 +133,23 @@ void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount)
 	ENGINE.particleCount = 0;
 
 	// default particle colors
-	ENGINE.fastColor = (Color) {
-		.r = 253,
-		.g = 231,
-		.b = 76,
-		.a = 255
-	};
-	ENGINE.slowColor = (Color) {
+	static Color slowColor = {
 		.r = 255,
 		.g = 255,
 		.b = 255,
 		.a = 255
 	};
+	ENGINE.particleFastColors = &slowColor;
+	ENGINE.particleSlowColorsCount = 1;
+
+	static Color fastColor = {
+		.r = 253,
+		.g = 231,
+		.b = 76,
+		.a = 255
+	};
+	ENGINE.particleSlowColors = &fastColor;
+	ENGINE.particleFastColorsCount = 1;
 
 
 	// alloc attractors
@@ -195,6 +200,8 @@ void spawnParticleAt(size_t x, size_t y) {
 		},
 		.vel = Vector2Zero(),
 		.accel = Vector2Zero(),
+		.slowColor = ENGINE.particleSlowColors[rand() % ENGINE.particleSlowColorsCount],
+		.fastColor = ENGINE.particleFastColors[rand() % ENGINE.particleFastColorsCount]
 	};
 
 	++ENGINE.particleCount;
@@ -298,14 +305,17 @@ void runUpdate(float dt) {
 void drawParticles() {
 	for (size_t i = 0; i < ENGINE.particleCount; ++i) {
 		Particle p = ENGINE.particles[i];
-		DrawPixelV(p.pos, p.color);
+		DrawPixelV(p.pos, p.lerpedColor);
 	}
 }
 
-void setSlowParticleColor(Color color) {
-	ENGINE.slowColor = color;
+void setSlowParticleColors(Color* colors, size_t count) {
+
+	ENGINE.particleSlowColors = colors;
+	ENGINE.particleSlowColorsCount = count;
 }
 
-void setFastParticleColor(Color color) {
-	ENGINE.fastColor = color;
+void setFastParticleColors(Color* colors, size_t count) {
+	ENGINE.particleFastColors = colors;
+	ENGINE.particleFastColorsCount = count;
 }

@@ -16,7 +16,9 @@ typedef struct {
 	Vector2 vel;
 	float velLen;
 	Vector2 accel;
-	Color color;
+	Color slowColor;
+	Color fastColor;
+	Color lerpedColor;
 } Particle;
 
 typedef struct {
@@ -43,8 +45,10 @@ static struct {
 	Particle* particles;
 	size_t particleCount;
 	size_t particleCap;
-	Color slowColor;
-	Color fastColor;
+	Color* particleSlowColors;
+	size_t particleSlowColorsCount;
+	Color* particleFastColors;
+	size_t particleFastColorsCount;
 	// attractors
 	Attractor* attractors;
 	Attractor* mouseAttractor;
