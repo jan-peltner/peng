@@ -54,10 +54,13 @@ void applyAccel(Particle* self, float dt) {
 void applyAttractorForce(Particle* self, Attractor* attractor, float winDiag) {
 	if (!attractor->isActive) return;
 	Vector2 direction = toAttractorNormalized(self, attractor);
+	Vector2 normalVec = Vector2Rotate(direction, PI/2);
 	float normalizedDist = toAttractorLengthNormalized(self, attractor, winDiag);
 	float gravityForceMag = attractor->gravity / ((normalizedDist * normalizedDist) + EPSILON);
+	float rotationForceMag = attractor->gravity * 0.33f / ((normalizedDist * normalizedDist) + EPSILON);
 	Vector2 gravity = Vector2Scale(direction, gravityForceMag);
-	self->accel = Vector2Add(self->accel, gravity);
+	Vector2 rotation = Vector2Scale(normalVec, rotationForceMag);
+	self->accel = Vector2Add(Vector2Add(self->accel, gravity), rotation);
 }
 
 void applyFrictionForce(Particle *self) {
@@ -208,12 +211,13 @@ void spawnParticlesRandom() {
 	}
 }
 
-void createMouseAttractor(float gravity) {
+void createMouseAttractor(float gravity, float rotationCoeff) {
 	if (ENGINE.attractorCount >= ENGINE.attractorCap || ENGINE.useMouseAttractor) return;
 
 	ENGINE.attractors[ENGINE.attractorCount] = (Attractor) {
 		.pos = GetMousePosition(),
 		.gravity = gravity,
+		.rotationCoeff = rotationCoeff,
 		.isActive = true
 	};
 

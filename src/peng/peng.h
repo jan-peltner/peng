@@ -19,7 +19,7 @@ void setFastParticleColor(Color color);
 
 // attractors
 
-void createMouseAttractor(float gravity);
+void createMouseAttractor(float gravity, float rotationCoeff);
 void toggleAttractors();
 
 // physics 

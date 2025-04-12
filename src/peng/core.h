@@ -22,6 +22,7 @@ typedef struct {
 typedef struct {
 	Vector2 pos;
 	float gravity;
+	float rotationCoeff;
 	bool isActive;
 } Attractor;
 

@@ -12,16 +12,17 @@ int main(void) {
 	startPeng(
 		WINDOW_WIDTH, 
 		WINDOW_HEIGHT, 
-		20000, 
+		30000, 
 		10 
 	);
 
 	toggleAttractorForce();
+	// setSlowParticleColor(BLACK);
 	
 	// spawnParticleAt(100, 100, RAYWHITE);
 	// spawnParticleAt(100, 101, RAYWHITE);
 	spawnParticlesRandom();
-	createMouseAttractor(2.0f);
+	createMouseAttractor(2.0f, 0.33f);
 
 	while (!WindowShouldClose()) {
 		float dt = GetFrameTime();
