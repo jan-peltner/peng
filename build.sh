@@ -15,9 +15,11 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 	INCLUDE_PATH="-I/opt/homebrew/include"
 	LIB_PATH="-L/opt/homebrew/lib"
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-	INCLUDE_PATH="/usr/local/include"
-	LIB_PATH="/usr/local/lib"
+	#linux build
+	INCLUDE_PATH="-I/usr/local/include"
+	LIB_PATH="-L/usr/local/lib"
 else
+	#unsupported os
 	echo "Unsupported OS. Exiting compilation."
 	exit 1
 fi
