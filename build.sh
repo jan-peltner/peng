@@ -16,6 +16,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 	LIB_PATH="-L/opt/homebrew/lib"
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
 	#linux build
+	echo "Building for limux..."
 	INCLUDE_PATH="-I/usr/local/include"
 	LIB_PATH="-L/usr/local/lib"
 else
