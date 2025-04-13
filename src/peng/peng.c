@@ -6,10 +6,8 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "threadpool.h"
 #include "core.h"
 #include "peng.h"
-
 
 float toAttractorLength(const Particle* self, Attractor* attractor) {
 	Vector2 delta = Vector2Subtract(attractor->pos, self->pos);
@@ -112,34 +110,6 @@ void oMapSet(Particle* p, char* oMap) {
 	oMap[(int)p->pos.y * ENGINE.winWidth + (int)p->pos.x] = 1;
 }
 
-void runMtPhysUpdate(void* arg) {
-	ThreadData* tData = (ThreadData*)arg;
-
-	for (size_t i = tData->start; i < tData->end; ++i) {
-		oMapSet(&ENGINE.particles[i], ENGINE.oMap);	
-	}
-
-	for (size_t i = tData->start; i < tData->end; ++i) {
-		if (ENGINE.useAttractorForce) {
-			for (size_t j = 0; j < ENGINE.attractorCount; ++j) {
-				applyAttractorForce(&ENGINE.particles[i], &ENGINE.attractors[j], ENGINE.winDiag);
-			}
-		}
-
-		if (ENGINE.useFrictionForce) {
-			applyFrictionForce(&ENGINE.particles[i]);
-		}
-
-		if (ENGINE.useRepellentForce) {
-			applyRepellentForce(&ENGINE.particles[i], ENGINE.oMap);
-		}
-
-		applyAccel(&ENGINE.particles[i], tData->dt);
-		applyVel(&ENGINE.particles[i], tData->dt);
-		computeColor(&ENGINE.particles[i]);
-	}
-} 
-
 void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount) {
 	// window
 	ENGINE.winWidth = winW;
@@ -207,11 +177,6 @@ void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount)
 	// initialize oMap with 0's
 	oMapClear(ENGINE.oMap);
 
-	// start worker threads
-	for (size_t t = 0; t < THREAD_COUNT; ++t) {
-		startWorker(&ENGINE.workers[t], (void*)&ENGINE.threadData, runMtPhysUpdate);
-	}
-
 	// config
 	ENGINE.useFrictionForce = true;
 	ENGINE.useAttractorForce = true;
@@ -223,10 +188,6 @@ void stopPeng() {
 	free(ENGINE.oMap);
 	free(ENGINE.attractors);
 	free(ENGINE.particles);
-	
-	for (size_t i = 0; i < THREAD_COUNT; ++i) {
-		stopWorker(&ENGINE.workers[i]);
-	}
 }
 
 void spawnParticleAt(size_t x, size_t y) {
@@ -289,6 +250,36 @@ void toggleRepellentForce() {
 	ENGINE.useRepellentForce = !ENGINE.useRepellentForce;
 }
 
+void* runMtPhysUpdate(void* arg) {
+	ThreadData* tData = (ThreadData*)arg;
+
+	for (size_t i = tData->start; i < tData->end; ++i) {
+		oMapSet(&ENGINE.particles[i], ENGINE.oMap);	
+	}
+
+	for (size_t i = tData->start; i < tData->end; ++i) {
+		if (ENGINE.useAttractorForce) {
+			for (size_t j = 0; j < ENGINE.attractorCount; ++j) {
+				applyAttractorForce(&ENGINE.particles[i], &ENGINE.attractors[j], ENGINE.winDiag);
+			}
+		}
+
+		if (ENGINE.useFrictionForce) {
+			applyFrictionForce(&ENGINE.particles[i]);
+		}
+
+		if (ENGINE.useRepellentForce) {
+			applyRepellentForce(&ENGINE.particles[i], ENGINE.oMap);
+		}
+
+		applyAccel(&ENGINE.particles[i], tData->dt);
+		applyVel(&ENGINE.particles[i], tData->dt);
+		computeColor(&ENGINE.particles[i]);
+	}
+
+	return NULL;		
+} 
+
 void runUpdate(float dt) {
 	size_t  particlesPerThread = ENGINE.particleCount / THREAD_COUNT;
 	oMapClear(ENGINE.oMap);
@@ -301,12 +292,11 @@ void runUpdate(float dt) {
 		ENGINE.threadData[t].start = t * particlesPerThread;
 		ENGINE.threadData[t].end = (t == THREAD_COUNT - 1) ? ENGINE.particleCount : (t + 1) * particlesPerThread;
 		ENGINE.threadData[t].dt = dt; 
-		ENGINE.workers[t].taskData = (void*)&ENGINE.threadData[t];
-		dispatchWorker(&ENGINE.workers[t]);
+		pthread_create(&ENGINE.threads[t], NULL, runMtPhysUpdate, &ENGINE.threadData[t]);
 	}	
 
 	for (size_t t = 0; t < THREAD_COUNT; ++t) {
-		awaitWorker(&ENGINE.workers[t]);
+		pthread_join(ENGINE.threads[t], NULL);
 	}
 
 	++ENGINE.frameCounter;

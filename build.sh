@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CFLAGS="-Wall -Wextra"
-SRC="src/example.c src/peng/peng.c src/peng/threadpool.c"
+SRC="src/example.c src/peng/peng.c"
 OUT="-o bin/peng"
 LIBS="-lraylib -lm"
 
