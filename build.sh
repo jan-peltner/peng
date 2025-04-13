@@ -1,8 +1,8 @@
 #!/bin/bash
 
 EXAMPLE_NAME=${1:-basic}
-EXAMPLE_FILE="src/examples/$EXAMPLE_NAME.c"
-DEFAULT_EXAMPLE_FILE="src/examples/basic.c"
+EXAMPLE_FILE="examples/$EXAMPLE_NAME.c"
+DEFAULT_EXAMPLE_FILE="examples/basic.c"
 
 CFLAGS="-Wall -Wextra"
 PENG_SRC="src/peng/peng.c"
