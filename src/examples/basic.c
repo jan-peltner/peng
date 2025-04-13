@@ -1,5 +1,5 @@
 #include "raylib.h"
-#include "peng/peng.h"
+#include "../peng/peng.h"
 
 #define WINDOW_WIDTH 1440 
 #define WINDOW_HEIGHT 900 
@@ -38,7 +38,7 @@ int main(void) {
 	createMouseAttractor(2.0f, 0.33f);
 	toggleAttractorForce();
 
-	DisableCursor();
+	// DisableCursor();
 
 	while (!WindowShouldClose()) {
 		float dt = GetFrameTime();

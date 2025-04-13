@@ -1,5 +1,7 @@
 #!/bin/sh
 
-set -ex
+EXAMPLE_NAME=${1}
 
-./build.sh && cd bin && ./peng
+set -e
+
+./build.sh $EXAMPLE_NAME && cd bin && ./peng

@@ -1,11 +1,15 @@
 #!/bin/bash
 
+EXAMPLE_NAME=${1:-basic}
+EXAMPLE_FILE="src/examples/$EXAMPLE_NAME.c"
+DEFAULT_EXAMPLE_FILE="src/examples/basic.c"
+
 CFLAGS="-Wall -Wextra"
-SRC="src/example.c src/peng/peng.c"
+PENG_SRC="src/peng/peng.c"
 OUT="-o bin/peng"
 LIBS="-lraylib -lm"
 
-set -ex
+set -e
 
 mkdir -p bin
 
@@ -25,5 +29,12 @@ else
 	exit 1
 fi
 
+if [[ -f "$EXAMPLE_FILE" ]]; then
+	SRC="$EXAMPLE_FILE $PENG_SRC"
+	echo "Compiling example: $EXAMPLE_FILE"
+else
+	SRC="$DEFAULT_EXAMPLE_FILE $PENG_SRC"
+	echo "Example \"$1\" not found. Compiling fallback: $DEFAULT_EXAMPLE_FILE"
+fi
 
 gcc $SRC $CFLAGS $INCLUDE_PATH $LIB_PATH $LIBS $OUT
