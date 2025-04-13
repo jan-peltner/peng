@@ -209,7 +209,7 @@ void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount)
 
 	// start worker threads
 	for (size_t t = 0; t < THREAD_COUNT; ++t) {
-		startWorker(&ENGINE.workers[t], runMtPhysUpdate);
+		startWorker(&ENGINE.workers[t], (void*)&ENGINE.threadData, runMtPhysUpdate);
 	}
 
 	// config

@@ -19,8 +19,8 @@ void* runMainWorkerThread(void* arg) {
 		worker->shouldRun = false;
 		pthread_mutex_unlock(&worker->mutex);
 
-		worker->taskFn(worker->taskData);	
-			
+		worker->taskFn(&worker->taskData);	
+		
 		pthread_mutex_lock(&worker->mutex);
 		worker->isDone = true;
 		pthread_mutex_unlock(&worker->mutex);
@@ -29,13 +29,14 @@ void* runMainWorkerThread(void* arg) {
 	return NULL;
 };
 
-void startWorker(WorkerThread* worker, TaskFn taskFn) {
+void startWorker(WorkerThread* worker, void* taskData, TaskFn taskFn) {
 	pthread_mutex_init(&worker->mutex, NULL);
 	pthread_cond_init(&worker->cond, NULL);
 
 	worker->shouldRun = false;
 	worker->shouldQuit = false;
 	worker->isDone = false;
+	worker->taskData = taskData;
 	worker->taskFn = taskFn;
 
 	pthread_create(&worker->thread, NULL, runMainWorkerThread, (void*)worker);

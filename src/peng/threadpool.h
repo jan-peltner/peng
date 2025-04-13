@@ -19,7 +19,7 @@ typedef struct {
 } WorkerThread;
 
 void* runMainWorkerThread(void* arg);
-void startWorker(WorkerThread* worker, TaskFn taskFn);
+void startWorker(WorkerThread* worker, void* taskData, TaskFn taskFn);
 void dispatchWorker(WorkerThread* worker);
 void awaitWorker(WorkerThread* worker);
 void stopWorker(WorkerThread* worker);
