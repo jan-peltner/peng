@@ -61,6 +61,10 @@ static struct {
 	bool useRepellentForce;
 	bool useMouseAttractor;
 	bool isPhysicsPaused;
+	// shaders
+	Shader particleShader;
+	Material particleMat;
+	Mesh particleMesh;
 	// threads
 	pthread_t threads[THREAD_COUNT];
 	ThreadData threadData[THREAD_COUNT];

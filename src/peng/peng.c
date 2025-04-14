@@ -102,6 +102,17 @@ void computeColor(Particle* self) {
 	self->lerpedColor = ColorLerp(self->slowColor, self->fastColor, self->velLen / VELOCITY_VEC_MAX_LENGTH);
 }
 
+void updateMesh(Particle* self, size_t index) {
+	ENGINE.particleMesh.vertices[index * 3] = self->pos.x;
+	ENGINE.particleMesh.vertices[index * 3 + 1] = self->pos.y;
+	ENGINE.particleMesh.vertices[index * 3 + 2] = 0;
+	ENGINE.particleMesh.colors[index * 4] = self->lerpedColor.r;
+	ENGINE.particleMesh.colors[index * 4 + 1] = self->lerpedColor.g;
+	ENGINE.particleMesh.colors[index * 4 + 2] = self->lerpedColor.b;
+	ENGINE.particleMesh.colors[index * 4 + 3] = self->lerpedColor.a;
+	UpdateMeshBuffer(ENGINE.particleMesh, 3, ENGINE.particleMesh.colors, ENGINE.particleCount * 4 * sizeof(unsigned char), 0);
+}
+
 void oMapClear(char* oMap) {
 	memset(oMap, 0, ENGINE.winArea);
 }
@@ -117,7 +128,6 @@ void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount)
 	ENGINE.winArea = winW * winH;
 	ENGINE.winDiag = (int)(sqrtf(winW * winW + winH * winH) + 0.5f);
 	ENGINE.frameCounter = 0;
-
 	srand(time(NULL));
 
 	// alloc particles
@@ -151,7 +161,6 @@ void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount)
 	ENGINE.particleSlowColors = &fastColor;
 	ENGINE.particleFastColorsCount = 1;
 
-
 	// alloc attractors
 	Attractor* attractors = malloc(attractorCount * sizeof(Attractor));
 
@@ -174,8 +183,41 @@ void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount)
 
 	ENGINE.oMap = oMap;
 
+
 	// initialize oMap with 0's
 	oMapClear(ENGINE.oMap);
+
+	// shaders
+	float* particleVertices = malloc(ENGINE.particleCap * 3 * sizeof(float));
+	unsigned char* particleColors = malloc(ENGINE.particleCap * 4 * sizeof(unsigned char));
+
+	if (particleVertices == NULL) {
+		fprintf(stderr, "malloc failed @ particleVertices");
+		exit(1);
+	}
+
+	if (particleColors == NULL) {
+		fprintf(stderr, "malloc failed @ particleColors");
+		exit(1);
+	}
+
+	ENGINE.particleShader = LoadShader("particles.vert.glsl", "particles.frag.glsl");
+	ENGINE.particleMat = LoadMaterialDefault();
+	ENGINE.particleMat.shader = ENGINE.particleShader;
+	ENGINE.particleMesh = (Mesh) {
+		.vertexCount = ENGINE.particleCount,
+		.triangleCount = 0
+	};
+	ENGINE.particleMesh.vertices = particleVertices;
+	ENGINE.particleMesh.colors = particleColors;
+
+	UploadMesh(&ENGINE.particleMesh, false);
+	
+	Vector2 res = {
+		.x = (float)ENGINE.winWidth,
+		.y = (float)ENGINE.winHeight
+	};
+	SetShaderValue(ENGINE.particleShader, GetShaderLocation(ENGINE.particleShader, "uResolution"), &res, SHADER_UNIFORM_VEC2);
 
 	// config
 	ENGINE.useFrictionForce = true;
@@ -205,6 +247,7 @@ void spawnParticleAt(size_t x, size_t y) {
 	};
 
 	++ENGINE.particleCount;
+	ENGINE.particleMesh.vertexCount = ENGINE.particleCount;
 }
 
 void spawnParticlesRandom() {
@@ -275,6 +318,7 @@ void* runMtPhysUpdate(void* arg) {
 		applyAccel(&ENGINE.particles[i], tData->dt);
 		applyVel(&ENGINE.particles[i], tData->dt);
 		computeColor(&ENGINE.particles[i]);
+		updateMesh(&ENGINE.particles[i], i);
 	}
 
 	return NULL;		
@@ -299,18 +343,18 @@ void runUpdate(float dt) {
 		pthread_join(ENGINE.threads[t], NULL);
 	}
 
+	UpdateMeshBuffer(ENGINE.particleMesh, 0, ENGINE.particleMesh.vertices, ENGINE.particleCount * 3 * sizeof(float), 0);
+	UpdateMeshBuffer(ENGINE.particleMesh, 3, ENGINE.particleMesh.colors, ENGINE.particleCount * 4 * sizeof(unsigned char), 0);
 	++ENGINE.frameCounter;
 }
 
 void drawParticles() {
-	for (size_t i = 0; i < ENGINE.particleCount; ++i) {
-		Particle p = ENGINE.particles[i];
-		DrawPixelV(p.pos, p.lerpedColor);
-	}
+	BeginShaderMode(ENGINE.particleShader);
+		DrawMesh(ENGINE.particleMesh, ENGINE.particleMat, MatrixIdentity());
+	EndShaderMode();
 }
 
 void setSlowParticleColors(Color* colors, size_t count) {
-
 	ENGINE.particleSlowColors = colors;
 	ENGINE.particleSlowColorsCount = count;
 }
