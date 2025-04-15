@@ -3,6 +3,7 @@
 #include <time.h>
 #include <raylib.h>
 #include <raymath.h>
+#include <rlgl.h> 
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -102,17 +103,6 @@ void computeColor(Particle* self) {
 	self->lerpedColor = ColorLerp(self->slowColor, self->fastColor, self->velLen / VELOCITY_VEC_MAX_LENGTH);
 }
 
-void updateMesh(Particle* self, size_t index) {
-	ENGINE.particleMesh.vertices[index * 3] = self->pos.x;
-	ENGINE.particleMesh.vertices[index * 3 + 1] = self->pos.y;
-	ENGINE.particleMesh.vertices[index * 3 + 2] = 0;
-	ENGINE.particleMesh.colors[index * 4] = self->lerpedColor.r;
-	ENGINE.particleMesh.colors[index * 4 + 1] = self->lerpedColor.g;
-	ENGINE.particleMesh.colors[index * 4 + 2] = self->lerpedColor.b;
-	ENGINE.particleMesh.colors[index * 4 + 3] = self->lerpedColor.a;
-	UpdateMeshBuffer(ENGINE.particleMesh, 3, ENGINE.particleMesh.colors, ENGINE.particleCount * 4 * sizeof(unsigned char), 0);
-}
-
 void oMapClear(char* oMap) {
 	memset(oMap, 0, ENGINE.winArea);
 }
@@ -200,24 +190,20 @@ void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount)
 		fprintf(stderr, "malloc failed @ particleColors");
 		exit(1);
 	}
-
-	ENGINE.particleShader = LoadShader("particles.vert.glsl", "particles.frag.glsl");
-	ENGINE.particleMat = LoadMaterialDefault();
-	ENGINE.particleMat.shader = ENGINE.particleShader;
-	ENGINE.particleMesh = (Mesh) {
-		.vertexCount = ENGINE.particleCount,
-		.triangleCount = 0
-	};
-	ENGINE.particleMesh.vertices = particleVertices;
-	ENGINE.particleMesh.colors = particleColors;
-
-	UploadMesh(&ENGINE.particleMesh, false);
 	
-	Vector2 res = {
-		.x = (float)ENGINE.winWidth,
-		.y = (float)ENGINE.winHeight
-	};
-	SetShaderValue(ENGINE.particleShader, GetShaderLocation(ENGINE.particleShader, "uResolution"), &res, SHADER_UNIFORM_VEC2);
+	// GPU rendering
+	Color* pixelBuf = malloc(ENGINE.winArea * sizeof(Color));
+
+	if (pixelBuf == NULL) {
+		fprintf(stderr, "malloc failed @ pixelBuf");
+		exit(1);
+	}
+
+	ENGINE.pixelBuffer = pixelBuf;
+
+	Image temp = GenImageColor(ENGINE.winWidth, ENGINE.winHeight, BLACK);
+	ENGINE.particleTexture = LoadTextureFromImage(temp);
+	UnloadImage(temp);
 
 	// config
 	ENGINE.useFrictionForce = true;
@@ -230,6 +216,7 @@ void stopPeng() {
 	free(ENGINE.oMap);
 	free(ENGINE.attractors);
 	free(ENGINE.particles);
+	free(ENGINE.pixelBuffer);
 }
 
 void spawnParticleAt(size_t x, size_t y) {
@@ -247,7 +234,6 @@ void spawnParticleAt(size_t x, size_t y) {
 	};
 
 	++ENGINE.particleCount;
-	ENGINE.particleMesh.vertexCount = ENGINE.particleCount;
 }
 
 void spawnParticlesRandom() {
@@ -318,7 +304,10 @@ void* runMtPhysUpdate(void* arg) {
 		applyAccel(&ENGINE.particles[i], tData->dt);
 		applyVel(&ENGINE.particles[i], tData->dt);
 		computeColor(&ENGINE.particles[i]);
-		updateMesh(&ENGINE.particles[i], i);
+		
+		int x = (int)ENGINE.particles[i].pos.x;
+		int y = (int)ENGINE.particles[i].pos.y;
+		ENGINE.pixelBuffer[ENGINE.winWidth * y + x] = ENGINE.particles[i].lerpedColor;
 	}
 
 	return NULL;		
@@ -332,6 +321,9 @@ void runUpdate(float dt) {
 		ENGINE.mouseAttractor->pos = GetMousePosition();
 	}
 
+	// clear pixel buffer -> set background to black
+	memset(ENGINE.pixelBuffer, 0, ENGINE.winArea * sizeof(Color));
+
 	for (size_t t = 0; t < THREAD_COUNT; ++t) {
 		ENGINE.threadData[t].start = t * particlesPerThread;
 		ENGINE.threadData[t].end = (t == THREAD_COUNT - 1) ? ENGINE.particleCount : (t + 1) * particlesPerThread;
@@ -343,15 +335,13 @@ void runUpdate(float dt) {
 		pthread_join(ENGINE.threads[t], NULL);
 	}
 
-	UpdateMeshBuffer(ENGINE.particleMesh, 0, ENGINE.particleMesh.vertices, ENGINE.particleCount * 3 * sizeof(float), 0);
-	UpdateMeshBuffer(ENGINE.particleMesh, 3, ENGINE.particleMesh.colors, ENGINE.particleCount * 4 * sizeof(unsigned char), 0);
+	UpdateTexture(ENGINE.particleTexture, ENGINE.pixelBuffer);
+
 	++ENGINE.frameCounter;
 }
 
 void drawParticles() {
-	BeginShaderMode(ENGINE.particleShader);
-		DrawMesh(ENGINE.particleMesh, ENGINE.particleMat, MatrixIdentity());
-	EndShaderMode();
+	DrawTexture(ENGINE.particleTexture, 0, 0, WHITE);
 }
 
 void setSlowParticleColors(Color* colors, size_t count) {

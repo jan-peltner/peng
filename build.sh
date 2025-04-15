@@ -39,6 +39,6 @@ fi
 
 gcc $SRC $CFLAGS $INCLUDE_PATH $LIB_PATH $LIBS $OUT
 
-echo "Copying shaders..."
-
-cp src/peng/shaders/*.glsl bin/
+# echo "Copying shaders..."
+#
+# cp src/peng/shaders/*.glsl bin/

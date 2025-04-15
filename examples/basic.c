@@ -19,7 +19,7 @@ int main(void) {
 	    {137, 180, 250, 255}  // Blue
 	};
 	Color slowColors[] = {
-		BLACK
+		WHITE
 	};
 
 	InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Peng");	
@@ -27,7 +27,7 @@ int main(void) {
 	startPeng(
 		WINDOW_WIDTH, 
 		WINDOW_HEIGHT, 
-		30000, 
+		40000, 
 		10 
 	);
 
@@ -36,7 +36,7 @@ int main(void) {
 	spawnParticlesRandom();
 
 	createMouseAttractor(2.0f, 0.33f);
-	toggleAttractorForce();
+	// toggleAttractorForce();
 
 	// DisableCursor();
 
