@@ -71,5 +71,10 @@ extern ENGINE_t ENGINE;
 
 void oMapClear(char* oMap);
 void oMapSet(Particle* p, char* oMap);
+void toggleAttractorForce();
+void toggleFrictionForce();
+void toggleRepellentForce();
+void toggleParticlesFrozen();
+
 
 #endif // ENGINE_H

@@ -160,3 +160,17 @@ void setFastParticleColors(Color* colors, size_t count) {
 	ENGINE.particleFastColors = colors;
 	ENGINE.particleFastColorsCount = count;
 }
+
+void toggleAttractorForce() {
+	ENGINE.useAttractorForce = !ENGINE.useAttractorForce;
+}
+void toggleFrictionForce() {
+	ENGINE.useFrictionForce = !ENGINE.useFrictionForce;
+}
+void toggleRepellentForce() {
+	ENGINE.useRepellentForce = !ENGINE.useRepellentForce;
+}
+void toggleParticlesFrozen() {
+	ENGINE.particlesFrozen = !ENGINE.particlesFrozen;
+}
+
