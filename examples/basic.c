@@ -19,7 +19,7 @@ int main(void) {
 	    {137, 180, 250, 255}  // Blue
 	};
 	Color slowColors[] = {
-		WHITE
+		BLACK	
 	};
 
 	InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Peng");	
@@ -35,8 +35,8 @@ int main(void) {
 	setFastParticleColors(fastColors, 10);
 	spawnParticlesRandom();
 
+	toggleParticlesFrozen();
 	createMouseAttractor(2.0f, 0.33f);
-	// toggleAttractorForce();
 
 	// DisableCursor();
 
@@ -45,7 +45,7 @@ int main(void) {
 		fps = GetFPS();
 
 		if (IsKeyPressed(KEY_SPACE)) {
-			toggleAttractorForce();
+			toggleParticlesFrozen();
 		}
 
 		runUpdate(dt);

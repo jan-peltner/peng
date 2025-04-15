@@ -209,6 +209,7 @@ void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount)
 	ENGINE.useFrictionForce = true;
 	ENGINE.useAttractorForce = true;
 	ENGINE.useRepellentForce = true;
+	ENGINE.particlesFrozen = false;
 	ENGINE.isPhysicsPaused = false;
 }
 
@@ -278,6 +279,9 @@ void toggleFrictionForce() {
 void toggleRepellentForce() {
 	ENGINE.useRepellentForce = !ENGINE.useRepellentForce;
 }
+void toggleParticlesFrozen() {
+	ENGINE.particlesFrozen = !ENGINE.particlesFrozen;
+}
 
 void* runMtPhysUpdate(void* arg) {
 	ThreadData* tData = (ThreadData*)arg;
@@ -301,8 +305,11 @@ void* runMtPhysUpdate(void* arg) {
 			applyRepellentForce(&ENGINE.particles[i], ENGINE.oMap);
 		}
 
+		// compute particle state
 		applyAccel(&ENGINE.particles[i], tData->dt);
-		applyVel(&ENGINE.particles[i], tData->dt);
+		if (!ENGINE.particlesFrozen) {
+			applyVel(&ENGINE.particles[i], tData->dt);
+		}
 		computeColor(&ENGINE.particles[i]);
 		
 		int x = (int)ENGINE.particles[i].pos.x;

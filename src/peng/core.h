@@ -60,6 +60,7 @@ static struct {
 	bool useFrictionForce;
 	bool useRepellentForce;
 	bool useMouseAttractor;
+	bool particlesFrozen;
 	bool isPhysicsPaused;
 	// GPU rendering 
 	Color* pixelBuffer;
