@@ -1,5 +1,5 @@
 #include "raylib.h"
-#include "../src/peng/peng.h"
+#include "../src/peng.h"
 
 #define WINDOW_WIDTH 1440 
 #define WINDOW_HEIGHT 900 

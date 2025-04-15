@@ -1,14 +1,11 @@
-#ifndef PENG_CORE_H
-	
-#define PENG_CORE_H
+#ifndef ENGINE_H
+
+#define ENGINE_H
 
 #include <pthread.h>
-#include <raylib.h>
 #include <stddef.h>
+#include <raylib.h>
 
-#define FRICTION_SCALAR 0.98f
-#define REPELLING_RADIUS 10
-#define VELOCITY_VEC_MAX_LENGTH 120.0f
 #define THREAD_COUNT 12
 
 typedef struct {
@@ -34,7 +31,7 @@ typedef struct {
 	float dt;
 } ThreadData;
 
-static struct {
+typedef struct {
 	// window & system
 	int winWidth;
 	int winHeight;
@@ -68,6 +65,11 @@ static struct {
 	// threads
 	pthread_t threads[THREAD_COUNT];
 	ThreadData threadData[THREAD_COUNT];
-} ENGINE;
+} ENGINE_t;
 
-#endif // PENG_CORE_H
+extern ENGINE_t ENGINE;
+
+void oMapClear(char* oMap);
+void oMapSet(Particle* p, char* oMap);
+
+#endif // ENGINE_H

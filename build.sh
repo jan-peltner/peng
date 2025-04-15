@@ -5,7 +5,7 @@ EXAMPLE_FILE="examples/$EXAMPLE_NAME.c"
 DEFAULT_EXAMPLE_FILE="examples/basic.c"
 
 CFLAGS="-Wall -Wextra"
-PENG_SRC="src/peng/peng.c"
+PENG_SRC="src/core/engine.c src/core/physics.c src/core/render.c src/core/spawn.c"
 OUT="-o bin/peng"
 LIBS="-lraylib -lm"
 
