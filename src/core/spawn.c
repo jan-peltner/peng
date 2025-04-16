@@ -31,13 +31,13 @@ void spawnParticlesRandom(const Color* lowVelColors, size_t lowVelColorsCount, c
 	}
 }
 
-void spawnParticlesFromImage(Image* img, Vector2 origin) {
+void spawnParticlesFromImage(Image* img, Vector2 origin, size_t sampleStride) {
 	Color* imgColors = LoadImageColors(*img);
 	int imgCols = img->width;
 	int imgRows = img->height;
 
-	for (size_t i = 0; i < imgRows; ++i) {
-		for (size_t j = 0; j < imgCols; ++j) {
+	for (size_t i = 0; i < imgRows; i += sampleStride) {
+		for (size_t j = 0; j < imgCols; j += sampleStride) {
 			Color highVelColor = imgColors[i * imgCols + j];
 			// if(highVelColor.a < 128) continue;
 			spawnParticleAt((int)origin.x + j, (int)origin.y + i, BLACK, highVelColor);

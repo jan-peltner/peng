@@ -17,8 +17,8 @@ int main(void) {
 		10 
 	);
 
-	Image img  = LoadImage("../assets/flower.jpg");
-	spawnParticlesFromImage(&img, (Vector2){.x = WINDOW_WIDTH / 2 - img.width / 2, .y = WINDOW_HEIGHT / 2 - img.height / 2});	
+	Image img  = LoadImage("../assets/neon-flower.jpg");
+	spawnParticlesFromImage(&img, (Vector2){.x = WINDOW_WIDTH / 2 - img.width / 2, .y = WINDOW_HEIGHT / 2 - img.height / 2}, 2);	
 
 	toggleRepellentForce();
 	toggleParticlesFrozen();
