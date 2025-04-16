@@ -1,5 +1,6 @@
 #include "engine.h"
 #include "raymath.h"
+#include <raylib.h>
 #include <stdlib.h>
 
 void spawnParticleAt(size_t x, size_t y, Color lowVelColor, Color highVelColor) {
@@ -19,7 +20,7 @@ void spawnParticleAt(size_t x, size_t y, Color lowVelColor, Color highVelColor) 
 	++ENGINE.particleCount;
 }
 
-void spawnParticlesRandom(Color* lowVelColors, size_t lowVelColorsCount, Color* highVelColors, size_t highVelColorsCount) {
+void spawnParticlesRandom(const Color* lowVelColors, size_t lowVelColorsCount, const Color* highVelColors, size_t highVelColorsCount) {
 	size_t left = ENGINE.particleCap - ENGINE.particleCount;
 
 	for (size_t i = 0; i < left; ++i) {
@@ -28,6 +29,22 @@ void spawnParticlesRandom(Color* lowVelColors, size_t lowVelColorsCount, Color* 
 		spawnParticleAt(x, y, lowVelColors[rand() % lowVelColorsCount], highVelColors[rand() % highVelColorsCount]);		
 		ENGINE.oMap[y * ENGINE.winWidth + x] = 1;
 	}
+}
+
+void spawnParticlesFromImage(Image* img, Vector2 origin) {
+	Color* imgColors = LoadImageColors(*img);
+	int imgCols = img->width;
+	int imgRows = img->height;
+
+	for (size_t i = 0; i < imgRows; ++i) {
+		for (size_t j = 0; j < imgCols; ++j) {
+			Color highVelColor = imgColors[i * imgCols + j];
+			// if(highVelColor.a < 128) continue;
+			spawnParticleAt((int)origin.x + j, (int)origin.y + i, BLACK, highVelColor);
+		}
+	}	
+
+	UnloadImageColors(imgColors);
 }
 
 void createMouseAttractor(float gravity, float rotationCoeff) {
@@ -45,4 +62,3 @@ void createMouseAttractor(float gravity, float rotationCoeff) {
 	ENGINE.useMouseAttractor = true;
 	++ENGINE.attractorCount;
 }
-
