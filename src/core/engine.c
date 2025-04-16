@@ -36,25 +36,6 @@ void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount)
 	ENGINE.particleCap = particlesCount;
 	ENGINE.particleCount = 0;
 
-	// default particle colors
-	static Color slowColor = {
-		.r = 255,
-		.g = 255,
-		.b = 255,
-		.a = 255
-	};
-	ENGINE.particleFastColors = &slowColor;
-	ENGINE.particleSlowColorsCount = 1;
-
-	static Color fastColor = {
-		.r = 253,
-		.g = 231,
-		.b = 76,
-		.a = 255
-	};
-	ENGINE.particleSlowColors = &fastColor;
-	ENGINE.particleFastColorsCount = 1;
-
 	// alloc attractors
 	Attractor* attractors = malloc(attractorCount * sizeof(Attractor));
 
@@ -135,16 +116,6 @@ void runUpdate(float dt) {
 	UpdateTexture(ENGINE.particleTexture, ENGINE.pixelBuffer);
 
 	++ENGINE.frameCounter;
-}
-
-void setSlowParticleColors(Color* colors, size_t count) {
-	ENGINE.particleSlowColors = colors;
-	ENGINE.particleSlowColorsCount = count;
-}
-
-void setFastParticleColors(Color* colors, size_t count) {
-	ENGINE.particleFastColors = colors;
-	ENGINE.particleFastColorsCount = count;
 }
 
 void toggleAttractorForce() {

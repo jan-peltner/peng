@@ -2,7 +2,7 @@
 #include "raymath.h"
 #include <stdlib.h>
 
-void spawnParticleAt(size_t x, size_t y) {
+void spawnParticleAt(size_t x, size_t y, Color lowVelColor, Color highVelColor) {
 	if (ENGINE.particleCount >= ENGINE.particleCap) return;
 	
 	ENGINE.particles[ENGINE.particleCount] = (Particle) {
@@ -12,20 +12,20 @@ void spawnParticleAt(size_t x, size_t y) {
 		},
 		.vel = Vector2Zero(),
 		.accel = Vector2Zero(),
-		.slowColor = ENGINE.particleSlowColors[rand() % ENGINE.particleSlowColorsCount],
-		.fastColor = ENGINE.particleFastColors[rand() % ENGINE.particleFastColorsCount]
+		.lowVelColor = lowVelColor,
+		.highVelColor = highVelColor
 	};
 
 	++ENGINE.particleCount;
 }
 
-void spawnParticlesRandom() {
+void spawnParticlesRandom(Color* lowVelColors, size_t lowVelColorsCount, Color* highVelColors, size_t highVelColorsCount) {
 	size_t left = ENGINE.particleCap - ENGINE.particleCount;
 
 	for (size_t i = 0; i < left; ++i) {
 		size_t x = rand() % ENGINE.winWidth;
 		size_t y = rand() % ENGINE.winHeight;
-		spawnParticleAt(x, y);		
+		spawnParticleAt(x, y, lowVelColors[rand() % lowVelColorsCount], highVelColors[rand() % highVelColorsCount]);		
 		ENGINE.oMap[y * ENGINE.winWidth + x] = 1;
 	}
 }

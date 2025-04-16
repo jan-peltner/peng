@@ -6,7 +6,7 @@
 
 int main(void) {
 	int fps;
-	Color fastColors[] = {
+	Color highVelColors[] = {
 	    {245, 224, 220, 255}, // Rosewater
 	    {242, 205, 205, 255}, // Flamingo
 	    {245, 194, 231, 255}, // Pink
@@ -18,7 +18,7 @@ int main(void) {
 	    {148, 226, 213, 255}, // Teal
 	    {137, 180, 250, 255}  // Blue
 	};
-	Color slowColors[] = {
+	Color lowVelColors[] = {
 		BLACK	
 	};
 
@@ -31,9 +31,7 @@ int main(void) {
 		10 
 	);
 
-	setSlowParticleColors(slowColors, 1);
-	setFastParticleColors(fastColors, 10);
-	spawnParticlesRandom();
+	spawnParticlesRandom(lowVelColors, PENG_ARRAY_LEN(lowVelColors), highVelColors, PENG_ARRAY_LEN(highVelColors));
 
 	toggleParticlesFrozen();
 	createMouseAttractor(2.0f, 0.33f);

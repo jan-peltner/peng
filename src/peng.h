@@ -5,6 +5,8 @@
 #include <raylib.h>
 #include <stddef.h>
 
+#define PENG_ARRAY_LEN(array) (sizeof(array) / sizeof((array)[0]))
+
 // init & destroy global context 
 
 void startPeng(int winWidth, int winHeight, size_t particlesCount, size_t attractorCount);
@@ -12,10 +14,8 @@ void stopPeng();
 
 // particles
 
-void spawnParticleAt(size_t x, size_t y);
-void spawnParticlesRandom();
-void setSlowParticleColors(Color* colors, size_t count);
-void setFastParticleColors(Color* colors, size_t count);
+void spawnParticleAt(size_t x, size_t y, Color lowVelColor, Color highVelColor);
+void spawnParticlesRandom(Color* lowVelColors, size_t lowVelColorsCount, Color* highVelColors, size_t highVelColorsCount);
 
 // attractors
 

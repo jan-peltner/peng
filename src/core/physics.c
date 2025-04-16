@@ -89,7 +89,7 @@ void applyRepellentForce(Particle *self, char* oMap) {
 }
 
 void computeColor(Particle* self) {
-	self->lerpedColor = ColorLerp(self->slowColor, self->fastColor, self->velLen / VELOCITY_VEC_MAX_LENGTH);
+	self->lerpedColor = ColorLerp(self->lowVelColor, self->highVelColor, self->velLen / VELOCITY_VEC_MAX_LENGTH);
 }
 
 void* runMtPhysUpdate(void* arg) {
