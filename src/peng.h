@@ -21,7 +21,6 @@ void spawnParticlesFromImage(const Image* img, Vector2 origin, size_t sampleStri
 // attractors
 
 void createMouseAttractor(float gravity, float rotationCoeff);
-void toggleAttractors();
 
 // physics 
 
