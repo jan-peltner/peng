@@ -63,14 +63,11 @@ void applyFrictionForce(Particle *self) {
 }
 
 void applyRepellentForce(Particle *self, char* oMap) {
-	bool forceApplied = false; 
 	int cx = (int)self->pos.x;
 	int cy = (int)self->pos.y;
 
 	for (int col = cx - REPELLING_RADIUS + 1; col <= cx + REPELLING_RADIUS; ++col) {
 		for (int row = cy - REPELLING_RADIUS + 1; row <= cy + REPELLING_RADIUS; ++row) {
-			// INFO: forceApplied is a hacky way to gain performance
-			// if (forceApplied) return;
 			if(col > 0 && col < ENGINE.winWidth && row > 0 && row < ENGINE.winHeight) {
 				if (col == cx && row == cy) continue;
 				Vector2 delta = {
@@ -84,7 +81,6 @@ void applyRepellentForce(Particle *self, char* oMap) {
 						float invDistSq = 1.0f / distSq;
 						Vector2 force = Vector2Scale(delta, invDistSq * 3.33);
 						self->accel = Vector2Add(self->accel, force);
-						forceApplied = true;
 					}
 				}
 			}

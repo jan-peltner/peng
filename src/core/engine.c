@@ -81,20 +81,6 @@ void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount)
 	// initialize oMap with 0's
 	oMapClear(ENGINE.oMap);
 
-	// shaders
-	float* particleVertices = malloc(ENGINE.particleCap * 3 * sizeof(float));
-	unsigned char* particleColors = malloc(ENGINE.particleCap * 4 * sizeof(unsigned char));
-
-	if (particleVertices == NULL) {
-		fprintf(stderr, "malloc failed @ particleVertices");
-		exit(1);
-	}
-
-	if (particleColors == NULL) {
-		fprintf(stderr, "malloc failed @ particleColors");
-		exit(1);
-	}
-	
 	// GPU rendering
 	Color* pixelBuf = malloc(ENGINE.winArea * sizeof(Color));
 
