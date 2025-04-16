@@ -132,17 +132,3 @@ void* runMtPhysUpdate(void* arg) {
 
 	return NULL;		
 } 
-
-void toggleAttractorForce() {
-	ENGINE.useAttractorForce = !ENGINE.useAttractorForce;
-}
-void toggleFrictionForce() {
-	ENGINE.useFrictionForce = !ENGINE.useFrictionForce;
-}
-void toggleRepellentForce() {
-	ENGINE.useRepellentForce = !ENGINE.useRepellentForce;
-}
-void toggleParticlesFrozen() {
-	ENGINE.particlesFrozen = !ENGINE.particlesFrozen;
-}
-

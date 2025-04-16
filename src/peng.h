@@ -33,5 +33,10 @@ void runUpdate(float dt);
 // rendering
 
 void drawParticles();
+void drawForcesUi(int x, int y, int gap, int fontSize, Color fontColor);
+
+// controls
+
+void handleKeyInputs();
 
 #endif // PENG_API_H

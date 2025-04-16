@@ -44,17 +44,16 @@ int main(void) {
 		float dt = GetFrameTime();
 		fps = GetFPS();
 
-		if (IsKeyPressed(KEY_SPACE)) {
-			toggleParticlesFrozen();
-		}
-
+		handleKeyInputs();
 		runUpdate(dt);
 
 		BeginDrawing();
-
+		
 		ClearBackground(BLACK);
 		drawParticles();
+
 		DrawText(TextFormat("FPS: %d", fps), 10, 10, 18, RAYWHITE);
+		drawForcesUi(10, 30, 20, 18, RAYWHITE);
 
 		EndDrawing();
 	}

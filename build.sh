@@ -3,9 +3,11 @@
 EXAMPLE_NAME=${1:-basic}
 EXAMPLE_FILE="examples/$EXAMPLE_NAME.c"
 DEFAULT_EXAMPLE_FILE="examples/basic.c"
+# source path prefix
+SPP="src/core"
 
 CFLAGS="-Wall -Wextra"
-PENG_SRC="src/core/engine.c src/core/physics.c src/core/render.c src/core/spawn.c"
+PENG_SRC="$SPP/engine.c $SPP/physics.c $SPP/render.c $SPP/spawn.c $SPP/controls.c"
 OUT="-o bin/peng"
 LIBS="-lraylib -lm"
 
