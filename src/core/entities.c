@@ -67,6 +67,7 @@ AttractorId spawnAnimatedAttractor(const Vector2* animationPath, size_t pathLen,
 		.isAnimated = true 
 	};
 
+	++ENGINE.attractorCount;
 	return ATTRACTOR_ID++;
 }
 
@@ -87,6 +88,7 @@ AttractorId spawnStaticAttractor(Vector2 origin, float gravity, float rotationCo
 		.isAnimated = false 
 	};
 
+	++ENGINE.attractorCount;
 	return ATTRACTOR_ID++;
 }
 
