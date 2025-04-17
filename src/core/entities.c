@@ -53,7 +53,7 @@ void spawnParticlesFromImage(Image* img, Vector2 origin, size_t sampleStride) {
 AttractorId spawnAnimatedAttractor(const Vector2* animationPath, size_t pathLen, float totalAnimationTime, bool isLooping, float gravity, float rotationCoeff) {
 	if (ENGINE.attractorCount >= ENGINE.attractorCap || pathLen < 2) return -1;
 
-	ENGINE.attractors[ENGINE.attractorCount] = (Attractor) {
+	ENGINE.attractors[ENGINE.attractorCount++] = (Attractor) {
 		.id = ATTRACTOR_ID,
 		.pos = animationPath[0],
 		.gravity = gravity,
@@ -67,14 +67,13 @@ AttractorId spawnAnimatedAttractor(const Vector2* animationPath, size_t pathLen,
 		.isAnimated = true 
 	};
 
-	++ENGINE.attractorCount;
 	return ATTRACTOR_ID++;
 }
 
 AttractorId spawnStaticAttractor(Vector2 origin, float gravity, float rotationCoeff) {
 	if (ENGINE.attractorCount >= ENGINE.attractorCap) return -1;
 
-	ENGINE.attractors[ENGINE.attractorCount] = (Attractor) {
+	ENGINE.attractors[ENGINE.attractorCount++] = (Attractor) {
 		.id = ATTRACTOR_ID,
 		.pos = origin,
 		.gravity = gravity,
@@ -88,7 +87,6 @@ AttractorId spawnStaticAttractor(Vector2 origin, float gravity, float rotationCo
 		.isAnimated = false 
 	};
 
-	++ENGINE.attractorCount;
 	return ATTRACTOR_ID++;
 }
 
@@ -109,7 +107,7 @@ void toggleAttractor(AttractorId id) {
 AttractorId createMouseAttractor(float gravity, float rotationCoeff) {
 	if (ENGINE.attractorCount >= ENGINE.attractorCap || ENGINE.useMouseAttractor) return -1;
 
-	ENGINE.attractors[ENGINE.attractorCount] = (Attractor) {
+	ENGINE.attractors[ENGINE.attractorCount++] = (Attractor) {
 		.id = ATTRACTOR_ID,
 		.pos = GetMousePosition(),
 		.gravity = gravity,
@@ -121,9 +119,8 @@ AttractorId createMouseAttractor(float gravity, float rotationCoeff) {
 		.isAnimated = false
 	};
 
-	ENGINE.mouseAttractor = ENGINE.attractors + ENGINE.attractorCount;
+	ENGINE.mouseAttractor = ENGINE.attractors + ENGINE.attractorCount - 1;
 
 	ENGINE.useMouseAttractor = true;
-	++ENGINE.attractorCount;
 	return ATTRACTOR_ID++;
 }
