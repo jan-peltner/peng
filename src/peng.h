@@ -4,8 +4,11 @@
 
 #include <raylib.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #define PENG_ARRAY_LEN(array) (sizeof(array) / sizeof((array)[0]))
+
+typedef int32_t AttractorId;
 
 // init & destroy global context 
 
@@ -16,11 +19,14 @@ void stopPeng();
 
 void spawnParticleAt(size_t x, size_t y, Color lowVelColor, Color highVelColor);
 void spawnParticlesRandom(const Color* lowVelColors, size_t lowVelColorsCount, const Color* highVelColors, size_t highVelColorsCount);
-void spawnParticlesFromImage(const Image* img, Vector2 origin, size_t sampleStride);
+void spawnParticlesFromImage(Image* img, Vector2 origin, size_t sampleStride);
 
 // attractors
 
-void createMouseAttractor(float gravity, float rotationCoeff);
+AttractorId createMouseAttractor(float gravity, float rotationCoeff);
+AttractorId spawnStaticAttractor(Vector2 origin, float gravity, float rotationCoeff);
+AttractorId spawnAnimatedAttractor(const Vector2* animationPath, size_t pathLen, float totalAnimationTime, bool isLooping, float gravity, float rotationCoeff);
+void toggleAttractor(AttractorId id);
 
 // physics 
 
@@ -33,6 +39,7 @@ void runUpdate(float dt);
 // rendering
 
 void drawParticles();
+void drawAttractors();
 void drawForcesUi(int x, int y, int gap, int fontSize, Color fontColor);
 
 // controls

@@ -1,5 +1,6 @@
 #include "engine.h"
 #include "physics.h"
+#include "animation.h"
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -99,6 +100,10 @@ void runUpdate(float dt) {
 		ENGINE.mouseAttractor->pos = GetMousePosition();
 	}
 
+	for (size_t a = 0; a < ENGINE.attractorCount; ++a) {
+		updateAttractorAnimation(&ENGINE.attractors[a], dt);
+	}
+
 	// clear pixel buffer -> set background to black
 	memset(ENGINE.pixelBuffer, 0, ENGINE.winArea * sizeof(Color));
 
@@ -121,12 +126,15 @@ void runUpdate(float dt) {
 void toggleAttractorForce() {
 	ENGINE.useAttractorForce = !ENGINE.useAttractorForce;
 }
+
 void toggleFrictionForce() {
 	ENGINE.useFrictionForce = !ENGINE.useFrictionForce;
 }
+
 void toggleRepellentForce() {
 	ENGINE.useRepellentForce = !ENGINE.useRepellentForce;
 }
+
 void toggleParticlesFrozen() {
 	ENGINE.particlesFrozen = !ENGINE.particlesFrozen;
 }

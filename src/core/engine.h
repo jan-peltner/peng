@@ -5,6 +5,7 @@
 #include <pthread.h>
 #include <stddef.h>
 #include <raylib.h>
+#include "../peng.h"
 
 #define THREAD_COUNT 12
 
@@ -19,10 +20,19 @@ typedef struct {
 } Particle;
 
 typedef struct {
+	AttractorId id;	
 	Vector2 pos;
 	float gravity;
 	float rotationCoeff;
 	bool isActive;
+	
+	// path animation
+	const Vector2* path;
+	size_t pathLen;
+	float totalTime;
+	float elapsedTime;
+	bool isAnimated;
+	bool isLooping;
 } Attractor;
 
 typedef struct {
