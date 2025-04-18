@@ -9,6 +9,10 @@
 #define PENG_ARRAY_LEN(array) (sizeof(array) / sizeof((array)[0]))
 
 typedef int32_t AttractorId;
+typedef enum {
+	LOOP_WRAP,	// p1,p2,p3,p1,p2,p3,p1...
+	LOOP_PINGPONG	// p1,p2,p3,p2,p1,p2,p3...
+} LoopMode;
 
 // init & destroy global context 
 
@@ -25,7 +29,7 @@ void spawnParticlesFromImage(Image* img, Vector2 origin, size_t sampleStride, Co
 
 AttractorId createMouseAttractor(float gravity, float rotationCoeff);
 AttractorId spawnStaticAttractor(Vector2 origin, float gravity, float rotationCoeff);
-AttractorId spawnAnimatedAttractor(const Vector2* animationPath, size_t pathLen, float totalAnimationTime, bool isLooping, float gravity, float rotationCoeff);
+AttractorId spawnAnimatedAttractor(const Vector2* animationPath, size_t pathLen, float totalAnimationTime, bool isLooping, LoopMode loopMode, float gravity, float rotationCoeff);
 void toggleAttractor(AttractorId id);
 
 // physics 

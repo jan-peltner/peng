@@ -33,6 +33,7 @@ typedef struct {
 	float elapsedTime;
 	bool isAnimated;
 	bool isLooping;
+	LoopMode loopMode;
 } Attractor;
 
 typedef struct {

@@ -50,7 +50,7 @@ void spawnParticlesFromImage(Image* img, Vector2 origin, size_t sampleStride, Co
 	UnloadImageColors(imgColors);
 }
 
-AttractorId spawnAnimatedAttractor(const Vector2* animationPath, size_t pathLen, float totalAnimationTime, bool isLooping, float gravity, float rotationCoeff) {
+AttractorId spawnAnimatedAttractor(const Vector2* animationPath, size_t pathLen, float totalAnimationTime, bool isLooping, LoopMode loopMode, float gravity, float rotationCoeff) {
 	if (ENGINE.attractorCount >= ENGINE.attractorCap) {
 		TraceLog(LOG_WARNING, "[PENG] Attractor capacity maxed out");
 		return -1;
@@ -80,6 +80,7 @@ AttractorId spawnAnimatedAttractor(const Vector2* animationPath, size_t pathLen,
 		.totalTime = totalAnimationTime,
 		.elapsedTime = 0.0f,
 		.isLooping = isLooping,
+		.loopMode = loopMode,
 		.isAnimated = true 
 	};
 
@@ -103,6 +104,7 @@ AttractorId spawnStaticAttractor(Vector2 origin, float gravity, float rotationCo
 		.totalTime = 0.0f,
 		.elapsedTime = 0.0f,
 		.isLooping = false,
+		.loopMode = LOOP_WRAP,
 		.isAnimated = false 
 	};
 
@@ -141,7 +143,10 @@ AttractorId createMouseAttractor(float gravity, float rotationCoeff) {
 		.isActive = true,
 		.path = NULL,
 		.pathLen = 0,
+		.totalTime = 0.0f,
+		.elapsedTime = 0.0f,
 		.isLooping = false,
+		.loopMode = LOOP_WRAP,
 		.isAnimated = false
 	};
 

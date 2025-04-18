@@ -5,6 +5,7 @@
 
 #define WINDOW_WIDTH 1440 
 #define WINDOW_HEIGHT 900 
+#define PENG_LOG
 
 int main(void) {
 	int fps;
@@ -27,8 +28,8 @@ int main(void) {
 	// Image img  = LoadImage("../assets/neon-flower.jpg");
 	// spawnParticlesFromImage(&img, (Vector2){.x = WINDOW_WIDTH / 2 - img.width / 2, .y = WINDOW_HEIGHT / 2 - img.height / 2}, 2);	
 
-	AttractorId id = spawnAnimatedAttractor(path, PENG_ARRAY_LEN(path), 5.0f, false, 2.0f, 0.33f);
-	printf("id: %d", id);
+	AttractorId id = spawnAnimatedAttractor(path, PENG_ARRAY_LEN(path), 5.0f, true, LOOP_PINGPONG, 2.0f, 0.33f);
+	printf("id: %d\n", id);
 	toggleRepellentForce();
 	toggleParticlesFrozen();
 	// createMouseAttractor(2.0f, 0.33f);
