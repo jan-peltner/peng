@@ -5,36 +5,10 @@
 #include <pthread.h>
 #include <stddef.h>
 #include <raylib.h>
+#include "entities.h"
 #include "../peng.h"
 
 #define THREAD_COUNT 12
-
-typedef struct {
-	Vector2 pos; 
-	Vector2 vel;
-	float velLen;
-	Vector2 accel;
-	Color lowVelColor;
-	Color highVelColor;
-	Color lerpedColor;
-} Particle;
-
-typedef struct {
-	AttractorId id;	
-	Vector2 pos;
-	float gravity;
-	float rotationCoeff;
-	bool isActive;
-	
-	// path animation
-	const Vector2* path;
-	size_t pathLen;
-	float totalTime;
-	float elapsedTime;
-	bool isAnimated;
-	bool isLooping;
-	LoopMode loopMode;
-} Attractor;
 
 typedef struct {
 	size_t start;
@@ -82,6 +56,5 @@ void toggleAttractorForce();
 void toggleFrictionForce();
 void toggleRepellentForce();
 void toggleParticlesFrozen();
-
 
 #endif // ENGINE_H

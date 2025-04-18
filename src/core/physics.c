@@ -1,4 +1,5 @@
 #include "engine.h"
+#include "entities.h"
 #include "physics.h"
 #include "raymath.h"
 #include <math.h>
