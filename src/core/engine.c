@@ -1,6 +1,6 @@
 #include "engine.h"
 #include "physics.h"
-#include "animation.h"
+#include "animations.h"
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>

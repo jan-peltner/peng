@@ -21,10 +21,10 @@ int main(void) {
 	float animationSpeed = 1.0f;
 	Vector2 topPath[] = {
 		(Vector2) {.x = 0.0f, .y = 200.0f},
-		(Vector2) {.x = 1440.0f, .y = 200.0f},
+		(Vector2) {.x = 1439.0f, .y = 200.0f},
 	};
 	Vector2 bottomPath[] = {
-		(Vector2) {.x = 1440.0f, .y = 700.0f},
+		(Vector2) {.x = 1439.0f, .y = 700.0f},
 		(Vector2) {.x = 0.0f, .y = 700.0f},
 	};
 

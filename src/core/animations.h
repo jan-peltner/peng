@@ -1,9 +1,9 @@
-#ifndef ANIMATION_H
+#ifndef ANIMATIONS_H
 
-#define ANIMATION_H
+#define ANIMATIONS_H
 
 #include "engine.h"
 
 void updateAttractorAnimation(Attractor* self, float dt);
 
-#endif // ANIMATION_H
+#endif // ANIMATIONS_H
