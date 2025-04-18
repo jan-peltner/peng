@@ -34,7 +34,7 @@ void spawnParticlesRandom(const Color* lowVelColors, size_t lowVelColorsCount, c
 	}
 }
 
-void spawnParticlesFromImage(Image* img, Vector2 origin, size_t sampleStride) {
+void spawnParticlesFromImage(Image* img, Vector2 origin, size_t sampleStride, Color lowVelColor) {
 	Color* imgColors = LoadImageColors(*img);
 	int imgCols = img->width;
 	int imgRows = img->height;
@@ -43,7 +43,7 @@ void spawnParticlesFromImage(Image* img, Vector2 origin, size_t sampleStride) {
 		for (size_t j = 0; j < imgCols; j += sampleStride) {
 			Color highVelColor = imgColors[i * imgCols + j];
 			// if(highVelColor.a < 128) continue;
-			spawnParticleAt((int)origin.x + j, (int)origin.y + i, BLACK, highVelColor);
+			spawnParticleAt((int)origin.x + j, (int)origin.y + i, lowVelColor, highVelColor);
 		}
 	}	
 
@@ -51,7 +51,23 @@ void spawnParticlesFromImage(Image* img, Vector2 origin, size_t sampleStride) {
 }
 
 AttractorId spawnAnimatedAttractor(const Vector2* animationPath, size_t pathLen, float totalAnimationTime, bool isLooping, float gravity, float rotationCoeff) {
-	if (ENGINE.attractorCount >= ENGINE.attractorCap || pathLen < 2) return -1;
+	if (ENGINE.attractorCount >= ENGINE.attractorCap) {
+		TraceLog(LOG_WARNING, "[PENG] Attractor capacity maxed out");
+		return -1;
+	}
+
+	if (pathLen < 2) {
+		TraceLog(LOG_WARNING, "[PENG] Animation path has to contain at least 2 points");
+		return -1;
+	}
+
+	// validate path
+	for (size_t i = 0; i < pathLen; ++i) {
+		if (animationPath[i].x < 0 || animationPath[i].x >= ENGINE.winWidth || animationPath[i].y < 0 || animationPath[i].y >= ENGINE.winHeight) {
+			TraceLog(LOG_WARNING, "[PENG] Animation path point at index %d is out of bounds", i);
+			return -1;
+		}
+	}
 
 	ENGINE.attractors[ENGINE.attractorCount++] = (Attractor) {
 		.id = ATTRACTOR_ID,
@@ -71,7 +87,10 @@ AttractorId spawnAnimatedAttractor(const Vector2* animationPath, size_t pathLen,
 }
 
 AttractorId spawnStaticAttractor(Vector2 origin, float gravity, float rotationCoeff) {
-	if (ENGINE.attractorCount >= ENGINE.attractorCap) return -1;
+	if (ENGINE.attractorCount >= ENGINE.attractorCap) {
+		TraceLog(LOG_WARNING, "[PENG] Attractor capacity maxed out");
+		return -1;
+	}
 
 	ENGINE.attractors[ENGINE.attractorCount++] = (Attractor) {
 		.id = ATTRACTOR_ID,
@@ -105,7 +124,14 @@ void toggleAttractor(AttractorId id) {
 }
 
 AttractorId createMouseAttractor(float gravity, float rotationCoeff) {
-	if (ENGINE.attractorCount >= ENGINE.attractorCap || ENGINE.useMouseAttractor) return -1;
+	if (ENGINE.attractorCount >= ENGINE.attractorCap) {
+		TraceLog(LOG_WARNING, "[PENG] Attractor capacity maxed out");
+		return -1;
+	}
+	if (ENGINE.useMouseAttractor) {
+		TraceLog(LOG_WARNING, "[PENG] Only one mouse attractor can exist at a time");
+		return -1;
+	}
 
 	ENGINE.attractors[ENGINE.attractorCount++] = (Attractor) {
 		.id = ATTRACTOR_ID,

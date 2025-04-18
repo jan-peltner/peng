@@ -19,7 +19,7 @@ void stopPeng();
 
 void spawnParticleAt(size_t x, size_t y, Color lowVelColor, Color highVelColor);
 void spawnParticlesRandom(const Color* lowVelColors, size_t lowVelColorsCount, const Color* highVelColors, size_t highVelColorsCount);
-void spawnParticlesFromImage(Image* img, Vector2 origin, size_t sampleStride);
+void spawnParticlesFromImage(Image* img, Vector2 origin, size_t sampleStride, Color lowVelColor);
 
 // attractors
 
