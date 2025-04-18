@@ -2,6 +2,7 @@
 #include "../peng.h"
 #include <math.h>
 #include <raymath.h>
+#include <stdio.h>
 
 void updateAttractorAnimation(Attractor* self, float dt) {
         if (!self->isAnimated || self->pathLen < 2) return;

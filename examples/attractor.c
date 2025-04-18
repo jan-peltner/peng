@@ -1,6 +1,5 @@
 #include "raylib.h"
 #include <raymath.h>
-#include <stdio.h>
 #include "../src/peng.h"
 
 #define WINDOW_WIDTH 1440 
@@ -19,17 +18,26 @@ int main(void) {
 		10 
 	);
 
-	Vector2 path[] = {
-		(Vector2) {.x = 10.0f, .y = 10.0f},
-		(Vector2) {.x = 100.0f, .y = 100.0f},
-		(Vector2) {.x = 200.0f, .y = 200.0f},
+	float animationSpeed = 1.0f;
+	Vector2 topPath[] = {
+		(Vector2) {.x = 0.0f, .y = 200.0f},
+		(Vector2) {.x = 1440.0f, .y = 200.0f},
+	};
+	Vector2 bottomPath[] = {
+		(Vector2) {.x = 1440.0f, .y = 700.0f},
+		(Vector2) {.x = 0.0f, .y = 700.0f},
 	};
 
-	// Image img  = LoadImage("../assets/neon-flower.jpg");
-	// spawnParticlesFromImage(&img, (Vector2){.x = WINDOW_WIDTH / 2 - img.width / 2, .y = WINDOW_HEIGHT / 2 - img.height / 2}, 2);	
+	Image img  = LoadImage("../assets/neon-flower.jpg");
+	spawnParticlesFromImage(
+		&img, 
+		(Vector2){.x = WINDOW_WIDTH / 2 - img.width / 2, .y = WINDOW_HEIGHT / 2 - img.height / 2},
+		4,
+		BLACK	
+	);	
 
-	AttractorId id = spawnAnimatedAttractor(path, PENG_ARRAY_LEN(path), 5.0f, true, LOOP_PINGPONG, 2.0f, 0.33f);
-	printf("id: %d\n", id);
+	AttractorId top = spawnAnimatedAttractor(topPath, PENG_ARRAY_LEN(topPath), animationSpeed, true, LOOP_PINGPONG, 4.0f, 0.33f);
+	AttractorId bot = spawnAnimatedAttractor(bottomPath, PENG_ARRAY_LEN(bottomPath), animationSpeed, true, LOOP_PINGPONG, 4.0f, 0.33f);
 	toggleRepellentForce();
 	toggleParticlesFrozen();
 	// createMouseAttractor(2.0f, 0.33f);
@@ -57,7 +65,7 @@ int main(void) {
 
 	stopPeng();
 
-	// UnloadImage(img);
+	UnloadImage(img);
 	CloseWindow();
 	return 0;
 }
