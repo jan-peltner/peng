@@ -34,8 +34,9 @@ int main(void) {
 
 	spawnParticlesRandom(lowVelColors, PENG_ARRAY_LEN(lowVelColors), highVelColors, PENG_ARRAY_LEN(highVelColors));
 	toggleParticlesFrozen();
+	toggleRepellentForce();
 	createMouseAttractor(2.0f, 0.33f);
-	createMouseLight(0.2f);
+	createMouseLight(1.0f);
 
 	// DisableCursor();
 
@@ -48,11 +49,12 @@ int main(void) {
 
 		BeginDrawing();
 		
-		ClearBackground(BLACK);
+		DrawRectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, Fade(BLACK, 0.33f));
 		drawParticles();
 
 		DrawText(TextFormat("FPS: %d", fps), 10, 10, 18, RAYWHITE);
 		drawForcesUi(10, 30, 20, 18, RAYWHITE);
+
 
 		EndDrawing();
 	}

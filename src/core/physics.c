@@ -30,8 +30,8 @@ void applyAccel(Particle* self, float dt) {
 	Vector2 newVel = Vector2Add(self->vel, accelerationDt); 
 	float newVelLen = Vector2Length(newVel);
 
-	if (newVelLen > VELOCITY_VEC_MAX_LENGTH) {
-		self->vel = Vector2Scale(newVel, VELOCITY_VEC_MAX_LENGTH / newVelLen);
+	if (newVelLen > MAX_SPEED) {
+		self->vel = Vector2Scale(newVel, MAX_SPEED / newVelLen);
 	} else {
 		self->vel = newVel;		
 	}
@@ -85,19 +85,21 @@ void applyRepellentForce(Particle *self, char* oMap) {
 	}		
 }
 
-void applyLight(Particle* self) {
-	float totalBrightness = 0.0f;
+void applyLighting(Particle* self) {
+	float physicalBrightness= 0.0f;
+	float velocityBrightness = fminf(Vector2Length(self->vel) / MAX_SPEED, 1.0f);
 	for (size_t i = 0; i < ENGINE.lightCount; ++i) {
 		Light light = ENGINE.lights[i];
 		float normalizedDist = normalizedDistanceTo(self, light.pos, ENGINE.winDiag);	
-		float brightness = light.intensity / ((normalizedDist * normalizedDist) + EPSILON);
-		totalBrightness += brightness;	
+		float brightness = light.intensity / expf(normalizedDist * 5.0f);
+		physicalBrightness += brightness;	
 	}
-	self->brightness = totalBrightness / ENGINE.lightCount;
+	physicalBrightness /= ENGINE.lightCount;
+	self->brightness = velocityBrightness * 0.5f + physicalBrightness * 0.5f;
 }
 
-void computeColor(Particle* self) {
-	self->lerpedColor = ColorLerp(self->lowColor, self->highColor, self->brightness / BRIGHTNESS_MAX);
+void lerpColor(Particle* self) {
+	self->lerpedColor = ColorLerp(self->lowColor, self->highColor, self->brightness);
 }
 
 void* runMtPhysUpdate(void* arg) {
@@ -127,8 +129,8 @@ void* runMtPhysUpdate(void* arg) {
 		if (!ENGINE.particlesFrozen) {
 			applyVel(&ENGINE.particles[i], tData->dt);
 		}
-		applyLight(&ENGINE.particles[i]);
-		computeColor(&ENGINE.particles[i]);
+		applyLighting(&ENGINE.particles[i]);
+		lerpColor(&ENGINE.particles[i]);
 		
 		int x = (int)ENGINE.particles[i].pos.x;
 		int y = (int)ENGINE.particles[i].pos.y;
