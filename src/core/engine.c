@@ -99,7 +99,6 @@ void startPeng(int winW, int winH, size_t particleCap, size_t attractorCap) {
 	ENGINE.useAttractorForce = true;
 	ENGINE.useRepellentForce = true;
 	ENGINE.particlesFrozen = false;
-	ENGINE.isPhysicsPaused = false;
 }
 
 void stopPeng() {
