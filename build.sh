@@ -7,7 +7,7 @@ DEFAULT_EXAMPLE_FILE="examples/basic.c"
 SPP="src/core"
 
 CFLAGS="-Wall -Wextra"
-PENG_SRC="$SPP/engine.c $SPP/physics.c $SPP/render.c $SPP/entities.c $SPP/controls.c $SPP/animations.c"
+PENG_SRC="$SPP/engine.c $SPP/physics.c $SPP/render.c $SPP/entities.c $SPP/controls.c $SPP/animations.c $SPP/scheduler.c"
 OUT="-o bin/peng"
 LIBS="-lraylib -lm"
 

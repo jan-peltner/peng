@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <raylib.h>
 #include "entities.h"
+#include "scheduler.h"
 #include "../peng.h"
 
 #define THREAD_COUNT 12
@@ -22,7 +23,7 @@ typedef struct {
 	int winHeight;
 	int winArea;
 	int winDiag;
-	size_t frameCounter;
+	float time;
 	// particles
 	Particle* particles;
 	size_t particleCount;
@@ -46,6 +47,8 @@ typedef struct {
 	// threads
 	pthread_t threads[THREAD_COUNT];
 	ThreadData threadData[THREAD_COUNT];
+	// scheduler
+	Scheduler scheduler;
 } ENGINE_t;
 
 extern ENGINE_t ENGINE;

@@ -1,6 +1,7 @@
 #include "engine.h"
 #include "physics.h"
 #include "animations.h"
+#include "scheduler.h"
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -16,17 +17,34 @@ void oMapSet(Particle* p, char* oMap) {
 	oMap[(int)p->pos.y * ENGINE.winWidth + (int)p->pos.x] = 1;
 }
 
-void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount) {
+void startPeng(int winW, int winH, size_t particleCap, size_t attractorCap) {
 	// window
 	ENGINE.winWidth = winW;
 	ENGINE.winHeight = winH;
 	ENGINE.winArea = winW * winH;
 	ENGINE.winDiag = (int)(sqrtf(winW * winW + winH * winH) + 0.5f);
-	ENGINE.frameCounter = 0;
+	ENGINE.time = 0;
+
 	srand(time(NULL));
 
+	// init scheduler
+		// alloc events
+		// INFO: event cap hard-coded for now
+	Event* events = malloc(64 * sizeof(Event));
+	if (events == NULL) {
+		fprintf(stderr, "malloc failed @ events");
+		exit(1);
+	}
+
+	ENGINE.scheduler = (Scheduler) {
+		.events = events,
+		.eventCount = 0,
+		.eventCap = 64,
+		.eventCursor = 0
+	};
+
 	// alloc particles
-	Particle* particles = malloc(particlesCount * sizeof(Particle));
+	Particle* particles = malloc(particleCap * sizeof(Particle));
 
 	if (particles == NULL) {
 		fprintf(stderr, "malloc failed @ particles");
@@ -34,11 +52,11 @@ void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount)
 	}
 
 	ENGINE.particles = particles;
-	ENGINE.particleCap = particlesCount;
+	ENGINE.particleCap = particleCap;
 	ENGINE.particleCount = 0;
 
 	// alloc attractors
-	Attractor* attractors = malloc(attractorCount * sizeof(Attractor));
+	Attractor* attractors = malloc(attractorCap * sizeof(Attractor));
 
 	if (attractors == NULL) {
 		fprintf(stderr, "malloc failed @ attractors");
@@ -46,7 +64,7 @@ void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount)
 	}
 
 	ENGINE.attractors = attractors;
-	ENGINE.attractorCap = attractorCount;
+	ENGINE.attractorCap = attractorCap;
 	ENGINE.attractorCount = 0;
 
 	// alloc oMap
@@ -58,7 +76,6 @@ void startPeng(int winW, int winH, size_t particlesCount, size_t attractorCount)
 	}
 
 	ENGINE.oMap = oMap;
-
 
 	// initialize oMap with 0's
 	oMapClear(ENGINE.oMap);
@@ -93,6 +110,9 @@ void stopPeng() {
 }
 
 void runUpdate(float dt) {
+	ENGINE.time += dt;
+	pollScheduler();
+
 	size_t  particlesPerThread = ENGINE.particleCount / THREAD_COUNT;
 	oMapClear(ENGINE.oMap);
 
@@ -119,12 +139,11 @@ void runUpdate(float dt) {
 	}
 
 	UpdateTexture(ENGINE.particleTexture, ENGINE.pixelBuffer);
-
-	++ENGINE.frameCounter;
 }
 
 void toggleAttractorForce() {
 	ENGINE.useAttractorForce = !ENGINE.useAttractorForce;
+	printf("toggled");
 }
 
 void toggleFrictionForce() {

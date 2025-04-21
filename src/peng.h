@@ -9,10 +9,18 @@
 #define PENG_ARRAY_LEN(array) (sizeof(array) / sizeof((array)[0]))
 
 typedef int32_t AttractorId;
+typedef void (*EventFn)(void*);
+
 typedef enum {
 	LOOP_WRAP,	// p1,p2,p3,p1,p2,p3,p1...
 	LOOP_PINGPONG	// p1,p2,p3,p2,p1,p2,p3...
 } LoopMode;
+
+typedef struct {
+	float dispatchAt;
+	EventFn fn;
+	void* eventData;
+} Event;
 
 // init & destroy global context 
 
@@ -49,5 +57,9 @@ void drawForcesUi(int x, int y, int gap, int fontSize, Color fontColor);
 // controls
 
 void handleKeyInputs();
+
+// scheduler
+
+void scheduleEvents(const Event* events, size_t amount);
 
 #endif // PENG_API_H
