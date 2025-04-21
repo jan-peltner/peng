@@ -31,14 +31,14 @@ void updateAttractorAnimation(Attractor* self, float dt) {
         }
 
         // interpolate along the correct segment
-        size_t segCount    = self->pathLen - 1;
-        float  segDuration = self->totalTime / segCount;
-        int    segIndex    = (int)(t / segDuration);
+        size_t segCount = self->pathLen - 1;
+        float segDuration = self->totalTime / segCount;
+        int segIndex = (int)(t / segDuration);
         if (segIndex >= (int)segCount) segIndex = (int)segCount - 1;
 
         float localT = (t - segIndex * segDuration) / segDuration;
-        Vector2 p0  = self->path[segIndex];
-        Vector2 p1  = self->path[segIndex + 1];
+        Vector2 p0 = self->path[segIndex];
+        Vector2 p1 = self->path[segIndex + 1];
 
         self->pos = Vector2Lerp(p0, p1, localT);
 }
