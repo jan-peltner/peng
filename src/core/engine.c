@@ -136,8 +136,14 @@ void runUpdate(float dt) {
 
 	if (ENGINE.useMouseAttractor || ENGINE.useMouseLight) {
 		Vector2 mousePos = GetMousePosition();
-		ENGINE.mouseLight->pos = mousePos;
-		ENGINE.mouseAttractor->pos = mousePos;
+
+		if (ENGINE.useMouseLight && ENGINE.mouseLight != NULL) {
+			ENGINE.mouseLight->pos = mousePos;
+		}
+
+		if (ENGINE.useMouseAttractor && ENGINE.mouseAttractor != NULL) {
+			ENGINE.mouseAttractor->pos = mousePos;
+		}
 	}
 
 	for (size_t a = 0; a < ENGINE.attractorCount; ++a) {

@@ -44,7 +44,7 @@ int main(void) {
 	toggleParticlesFrozen();
 
 	// spawnStaticLight((Vector2){.x = WINDOW_WIDTH / 2 - img.width / 2, .y = WINDOW_HEIGHT / 2 - img.height / 2}, 5.0f);
-	// createMouseLight(2.0f);
+	createMouseLight(2.0f);
 	createMouseAttractor(2.0f, 0.33f);
 	
 	// DisableCursor();
