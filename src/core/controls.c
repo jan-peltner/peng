@@ -14,4 +14,7 @@ void handleKeyInputs() {
 	if (IsKeyPressed(KEY_R)) {
 		toggleRepellentForce();
 	}
+	if (IsKeyPressed(KEY_F1)) {
+		toggleRenderUi();
+	}
 }

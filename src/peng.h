@@ -46,6 +46,7 @@ void toggleAttractorForce();
 void toggleFrictionForce();
 void toggleRepellentForce();
 void toggleParticlesFrozen();
+void toggleRenderUi();
 void runUpdate(float dt);
 
 // rendering

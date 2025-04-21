@@ -40,6 +40,7 @@ typedef struct {
 	bool useRepellentForce;
 	bool useMouseAttractor;
 	bool particlesFrozen;
+	bool renderUi;
 	// GPU rendering 
 	Color* pixelBuffer;
 	Texture2D particleTexture;
