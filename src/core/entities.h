@@ -8,10 +8,10 @@
 typedef struct {
 	Vector2 pos; 
 	Vector2 vel;
-	float velLen;
 	Vector2 accel;
-	Color lowVelColor;
-	Color highVelColor;
+	float brightness;
+	Color lowColor;
+	Color highColor;
 	Color lerpedColor;
 } Particle;
 
@@ -31,5 +31,21 @@ typedef struct {
 	bool isLooping;
 	LoopMode loopMode;
 } Attractor;
+
+typedef struct {
+	LightId id;
+	Vector2 pos;
+	float intensity;
+	bool isActive;
+	
+	// path animation
+	const Vector2* path;
+	size_t pathLen;
+	float totalTime;
+	float elapsedTime;
+	bool isAnimated;
+	bool isLooping;
+	LoopMode loopMode;
+} Light;
 
 #endif // ENTITIES_H

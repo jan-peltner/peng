@@ -8,7 +8,10 @@
 
 #define PENG_ARRAY_LEN(array) (sizeof(array) / sizeof((array)[0]))
 
-typedef int32_t AttractorId;
+typedef int32_t EntityId;
+typedef EntityId AttractorId;
+typedef EntityId LightId;
+
 typedef void (*EventFn)(void*);
 
 typedef enum {
@@ -22,10 +25,11 @@ typedef struct {
 	void* eventData;
 } Event;
 
-// init & destroy global context 
+// system 
 
-void startPeng(int winWidth, int winHeight, size_t particlesCount, size_t attractorCount);
+void startPeng(int winW, int winH, size_t particleCap, size_t attractorCap, size_t lightCap);
 void stopPeng();
+void runUpdate(float dt);
 
 // particles
 
@@ -40,20 +44,26 @@ AttractorId spawnStaticAttractor(Vector2 origin, float gravity, float rotationCo
 AttractorId spawnAnimatedAttractor(const Vector2* animationPath, size_t pathLen, float totalAnimationTime, bool isLooping, LoopMode loopMode, float gravity, float rotationCoeff);
 void toggleAttractor(AttractorId id);
 
-// physics 
+// lights
+
+LightId createMouseLight(float intensity);
+LightId spawnStaticLight(Vector2 origin, float intensity);
+LightId spawnAnimatedLight(const Vector2* animationPath, size_t pathLen, float totalAnimationTime, bool isLooping, LoopMode loopMode, float gravity);
+void toggleLight(LightId id);
+
+// forces 
 
 void toggleAttractorForce();
 void toggleFrictionForce();
 void toggleRepellentForce();
 void toggleParticlesFrozen();
-void toggleRenderUi();
-void runUpdate(float dt);
 
 // rendering
 
 void drawParticles();
 void drawAttractors();
 void drawForcesUi(int x, int y, int gap, int fontSize, Color fontColor);
+void toggleRenderUi();
 
 // controls
 

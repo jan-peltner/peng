@@ -2,10 +2,13 @@
 #include "raymath.h"
 #include "../peng.h"
 #include <raylib.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 static int32_t ATTRACTOR_ID = 1;
+static int32_t LIGHT_ID = 1;
 
+// particles
 void spawnParticleAt(size_t x, size_t y, Color lowVelColor, Color highVelColor) {
 	if (ENGINE.particleCount >= ENGINE.particleCap) return;
 	
@@ -16,8 +19,8 @@ void spawnParticleAt(size_t x, size_t y, Color lowVelColor, Color highVelColor) 
 		},
 		.vel = Vector2Zero(),
 		.accel = Vector2Zero(),
-		.lowVelColor = lowVelColor,
-		.highVelColor = highVelColor
+		.lowColor = lowVelColor,
+		.highColor = highVelColor
 	};
 
 	++ENGINE.particleCount;
@@ -50,6 +53,7 @@ void spawnParticlesFromImage(Image* img, Vector2 origin, size_t sampleStride, Co
 	UnloadImageColors(imgColors);
 }
 
+// attractors
 AttractorId spawnAnimatedAttractor(const Vector2* animationPath, size_t pathLen, float totalAnimationTime, bool isLooping, LoopMode loopMode, float gravity, float rotationCoeff) {
 	if (ENGINE.attractorCount >= ENGINE.attractorCap) {
 		TraceLog(LOG_WARNING, "[PENG] Attractor capacity maxed out");
@@ -153,5 +157,61 @@ AttractorId createMouseAttractor(float gravity, float rotationCoeff) {
 	ENGINE.mouseAttractor = ENGINE.attractors + ENGINE.attractorCount - 1;
 
 	ENGINE.useMouseAttractor = true;
+
 	return ATTRACTOR_ID++;
+}
+
+// lights
+LightId spawnStaticLight(Vector2 origin, float intensity) {
+	if (ENGINE.lightCount >= ENGINE.lightCap) {
+		TraceLog(LOG_WARNING, "[PENG] light capacity maxed out");
+		return -1;
+	}
+
+	ENGINE.lights[ENGINE.lightCount++] = (Light) {
+		.id = LIGHT_ID,
+		.pos = origin,
+		.intensity = intensity,
+		.isActive = true,
+		.path = NULL,
+		.pathLen = 0,
+		.totalTime = 0.0f,
+		.elapsedTime = 0.0f,
+		.isLooping = false,
+		.loopMode = LOOP_WRAP,
+		.isAnimated = false 
+	};
+
+	return LIGHT_ID++;
+}
+
+LightId createMouseLight(float intensity) {
+	if (ENGINE.lightCount >= ENGINE.lightCap) {
+		TraceLog(LOG_WARNING, "[PENG] Light capacity maxed out");
+		return -1;
+	}
+	if (ENGINE.useMouseLight) {
+		TraceLog(LOG_WARNING, "[PENG] Only one mouse light can exist at a time");
+		return -1;
+	}
+
+	ENGINE.lights[ENGINE.lightCount++] = (Light) {
+		.id = LIGHT_ID,
+		.pos = GetMousePosition(),
+		.intensity = intensity,
+		.isActive = true,
+		.path = NULL,
+		.pathLen = 0,
+		.totalTime = 0.0f,
+		.elapsedTime = 0.0f,
+		.isLooping = false,
+		.loopMode = LOOP_WRAP,
+		.isAnimated = false
+	};
+
+	ENGINE.mouseLight = ENGINE.lights + ENGINE.lightCount - 1;
+
+	ENGINE.useMouseLight = true;
+
+	return LIGHT_ID++;
 }

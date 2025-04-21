@@ -15,7 +15,8 @@ int main(void) {
 		WINDOW_WIDTH, 
 		WINDOW_HEIGHT, 
 		1000000, 
-		10 
+		10,
+		10
 	);
 
 	float animationSpeed = 1.0f;
@@ -38,10 +39,14 @@ int main(void) {
 
 	AttractorId top = spawnAnimatedAttractor(topPath, PENG_ARRAY_LEN(topPath), animationSpeed, true, LOOP_PINGPONG, 4.0f, 0.33f);
 	AttractorId bot = spawnAnimatedAttractor(bottomPath, PENG_ARRAY_LEN(bottomPath), animationSpeed, true, LOOP_PINGPONG, 4.0f, 0.33f);
+
 	toggleRepellentForce();
 	toggleParticlesFrozen();
-	// createMouseAttractor(2.0f, 0.33f);
 
+	// spawnStaticLight((Vector2){.x = WINDOW_WIDTH / 2 - img.width / 2, .y = WINDOW_HEIGHT / 2 - img.height / 2}, 5.0f);
+	// createMouseLight(2.0f);
+	createMouseAttractor(2.0f, 0.33f);
+	
 	// DisableCursor();
 
 	while (!WindowShouldClose()) {
@@ -55,7 +60,7 @@ int main(void) {
 		
 		ClearBackground(BLACK);
 		drawParticles();
-		drawAttractors();
+		// drawAttractors();
 
 		DrawText(TextFormat("FPS: %d", fps), 10, 10, 18, RAYWHITE);
 		drawForcesUi(10, 30, 20, 18, RAYWHITE);

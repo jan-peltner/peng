@@ -13,7 +13,8 @@ int main(void) {
 		WINDOW_WIDTH, 
 		WINDOW_HEIGHT, 
 		1000000, 
-		10 
+		10,
+		10
 	);
 
 	Image img  = LoadImage("../assets/neon-flower.jpg");

@@ -2,7 +2,9 @@
 #include "physics.h"
 #include "animations.h"
 #include "scheduler.h"
+#include "../peng.h"
 #include <math.h>
+#include <raylib.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -17,7 +19,7 @@ void oMapSet(Particle* p, char* oMap) {
 	oMap[(int)p->pos.y * ENGINE.winWidth + (int)p->pos.x] = 1;
 }
 
-void startPeng(int winW, int winH, size_t particleCap, size_t attractorCap) {
+void startPeng(int winW, int winH, size_t particleCap, size_t attractorCap, size_t lightCap) {
 	// window
 	ENGINE.winWidth = winW;
 	ENGINE.winHeight = winH;
@@ -55,18 +57,6 @@ void startPeng(int winW, int winH, size_t particleCap, size_t attractorCap) {
 	ENGINE.particleCap = particleCap;
 	ENGINE.particleCount = 0;
 
-	// alloc attractors
-	Attractor* attractors = malloc(attractorCap * sizeof(Attractor));
-
-	if (attractors == NULL) {
-		fprintf(stderr, "malloc failed @ attractors");
-		exit(1);
-	}
-
-	ENGINE.attractors = attractors;
-	ENGINE.attractorCap = attractorCap;
-	ENGINE.attractorCount = 0;
-
 	// alloc oMap
 	char* oMap = malloc(ENGINE.winArea);
 
@@ -80,6 +70,30 @@ void startPeng(int winW, int winH, size_t particleCap, size_t attractorCap) {
 	// initialize oMap with 0's
 	oMapClear(ENGINE.oMap);
 
+	// alloc attractors
+	Attractor* attractors = malloc(attractorCap * sizeof(Attractor));
+
+	if (attractors == NULL) {
+		fprintf(stderr, "malloc failed @ attractors");
+		exit(1);
+	}
+
+	ENGINE.attractors = attractors;
+	ENGINE.attractorCap = attractorCap;
+	ENGINE.attractorCount = 0;
+
+	// alloc lights
+	Light* lights = malloc(lightCap * sizeof(Light));
+
+	if (attractors == NULL) {
+		fprintf(stderr, "malloc failed @ lights");
+		exit(1);
+	}
+
+	ENGINE.lights = lights;
+	ENGINE.lightCap = lightCap;
+	ENGINE.lightCount = 0;
+	
 	// GPU rendering
 	Color* pixelBuf = malloc(ENGINE.winArea * sizeof(Color));
 
@@ -99,14 +113,18 @@ void startPeng(int winW, int winH, size_t particleCap, size_t attractorCap) {
 	ENGINE.useAttractorForce = true;
 	ENGINE.useRepellentForce = true;
 	ENGINE.particlesFrozen = false;
+	ENGINE.useMouseAttractor = false;
+	ENGINE.useMouseLight = false;
 	ENGINE.renderUi = true;
 }
 
 void stopPeng() {
+	free(ENGINE.particles);
 	free(ENGINE.oMap);
 	free(ENGINE.attractors);
-	free(ENGINE.particles);
+	free(ENGINE.lights);
 	free(ENGINE.pixelBuffer);
+	free(ENGINE.scheduler.events);
 }
 
 void runUpdate(float dt) {
@@ -116,8 +134,10 @@ void runUpdate(float dt) {
 	size_t  particlesPerThread = ENGINE.particleCount / THREAD_COUNT;
 	oMapClear(ENGINE.oMap);
 
-	if (ENGINE.useMouseAttractor) {
-		ENGINE.mouseAttractor->pos = GetMousePosition();
+	if (ENGINE.useMouseAttractor || ENGINE.useMouseLight) {
+		Vector2 mousePos = GetMousePosition();
+		ENGINE.mouseLight->pos = mousePos;
+		ENGINE.mouseAttractor->pos = mousePos;
 	}
 
 	for (size_t a = 0; a < ENGINE.attractorCount; ++a) {
@@ -143,7 +163,6 @@ void runUpdate(float dt) {
 
 void toggleAttractorForce() {
 	ENGINE.useAttractorForce = !ENGINE.useAttractorForce;
-	printf("toggled");
 }
 
 void toggleFrictionForce() {
@@ -161,4 +180,3 @@ void toggleParticlesFrozen() {
 void toggleRenderUi() {
 	ENGINE.renderUi = !ENGINE.renderUi;
 }
-

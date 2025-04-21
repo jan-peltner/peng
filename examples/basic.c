@@ -28,12 +28,14 @@ int main(void) {
 		WINDOW_WIDTH, 
 		WINDOW_HEIGHT, 
 		40000, 
-		10 
+		10,
+		10
 	);
 
 	spawnParticlesRandom(lowVelColors, PENG_ARRAY_LEN(lowVelColors), highVelColors, PENG_ARRAY_LEN(highVelColors));
 	toggleParticlesFrozen();
 	createMouseAttractor(2.0f, 0.33f);
+	createMouseLight(0.2f);
 
 	// DisableCursor();
 

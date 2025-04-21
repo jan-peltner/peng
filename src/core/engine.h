@@ -28,17 +28,23 @@ typedef struct {
 	Particle* particles;
 	size_t particleCount;
 	size_t particleCap;
+	char* oMap;
 	// attractors
 	Attractor* attractors;
 	Attractor* mouseAttractor;
 	size_t attractorCount;
 	size_t attractorCap;
-	char* oMap;
+	// lights 
+	Light* lights;
+	Light* mouseLight;
+	size_t lightCount;
+	size_t lightCap;
 	// config
 	bool useAttractorForce;
 	bool useFrictionForce;
 	bool useRepellentForce;
 	bool useMouseAttractor;
+	bool useMouseLight;
 	bool particlesFrozen;
 	bool renderUi;
 	// GPU rendering 

@@ -1,21 +1,15 @@
 #include "engine.h"
-#include "entities.h"
 #include "physics.h"
 #include "raymath.h"
 #include <math.h>
 
-float toAttractorLength(const Particle* self, Attractor* attractor) {
-	Vector2 delta = Vector2Subtract(attractor->pos, self->pos);
-	return sqrtf(delta.x * delta.x + delta.y * delta.y);
-}
-
-float toAttractorLengthNormalized(const Particle* self, Attractor* attractor, float winDiag) {
-	Vector2 delta = Vector2Subtract(attractor->pos, self->pos);
+float normalizedDistanceTo(const Particle* self, Vector2 to, float winDiag) {
+	Vector2 delta = Vector2Subtract(to, self->pos);
 	return sqrtf(delta.x * delta.x + delta.y * delta.y) / winDiag;
 }
 
-Vector2 toAttractorNormalized(const Particle* self, Attractor* attractor) {
-	Vector2 delta = Vector2Subtract(attractor->pos, self->pos);
+Vector2 unitVectorTo(const Particle* self, Vector2 to) {
+	Vector2 delta = Vector2Subtract(to, self->pos);
 	float length = sqrtf(delta.x * delta.x + delta.y * delta.y);
 	return (Vector2) {
 		.x = delta.x / length,
@@ -38,23 +32,25 @@ void applyAccel(Particle* self, float dt) {
 
 	if (newVelLen > VELOCITY_VEC_MAX_LENGTH) {
 		self->vel = Vector2Scale(newVel, VELOCITY_VEC_MAX_LENGTH / newVelLen);
-		self->velLen = VELOCITY_VEC_MAX_LENGTH;
 	} else {
 		self->vel = newVel;		
-		self->velLen = newVelLen;
 	}
 	self->accel = Vector2Zero();
 }
 
 void applyAttractorForce(Particle* self, Attractor* attractor, float winDiag) {
 	if (!attractor->isActive) return;
-	Vector2 direction = toAttractorNormalized(self, attractor);
+
+	Vector2 direction = unitVectorTo(self, attractor->pos);
 	Vector2 normalVec = Vector2Rotate(direction, PI/2);
-	float normalizedDist = toAttractorLengthNormalized(self, attractor, winDiag);
+
+	float normalizedDist = normalizedDistanceTo(self, attractor->pos, winDiag);
 	float gravityForceMag = attractor->gravity / ((normalizedDist * normalizedDist) + EPSILON);
 	float rotationForceMag = attractor->gravity * 0.33f / ((normalizedDist * normalizedDist) + EPSILON);
+
 	Vector2 gravity = Vector2Scale(direction, gravityForceMag);
 	Vector2 rotation = Vector2Scale(normalVec, rotationForceMag);
+
 	self->accel = Vector2Add(Vector2Add(self->accel, gravity), rotation);
 }
 
@@ -89,8 +85,19 @@ void applyRepellentForce(Particle *self, char* oMap) {
 	}		
 }
 
+void applyLight(Particle* self) {
+	float totalBrightness = 0.0f;
+	for (size_t i = 0; i < ENGINE.lightCount; ++i) {
+		Light light = ENGINE.lights[i];
+		float normalizedDist = normalizedDistanceTo(self, light.pos, ENGINE.winDiag);	
+		float brightness = light.intensity / ((normalizedDist * normalizedDist) + EPSILON);
+		totalBrightness += brightness;	
+	}
+	self->brightness = totalBrightness / ENGINE.lightCount;
+}
+
 void computeColor(Particle* self) {
-	self->lerpedColor = ColorLerp(self->lowVelColor, self->highVelColor, self->velLen / VELOCITY_VEC_MAX_LENGTH);
+	self->lerpedColor = ColorLerp(self->lowColor, self->highColor, self->brightness / BRIGHTNESS_MAX);
 }
 
 void* runMtPhysUpdate(void* arg) {
@@ -120,6 +127,7 @@ void* runMtPhysUpdate(void* arg) {
 		if (!ENGINE.particlesFrozen) {
 			applyVel(&ENGINE.particles[i], tData->dt);
 		}
+		applyLight(&ENGINE.particles[i]);
 		computeColor(&ENGINE.particles[i]);
 		
 		int x = (int)ENGINE.particles[i].pos.x;
