@@ -56,6 +56,7 @@ void startPeng(int winW, int winH, size_t particleCap, size_t attractorCap, size
 	ENGINE.particles = particles;
 	ENGINE.particleCap = particleCap;
 	ENGINE.particleCount = 0;
+	ENGINE.lightingBlend = 0.5;
 
 	// alloc oMap
 	char* oMap = malloc(ENGINE.winArea);
@@ -186,3 +187,7 @@ void toggleParticlesFrozen() {
 void toggleRenderUi() {
 	ENGINE.renderUi = !ENGINE.renderUi;
 }
+
+void setLightingBlend(float blend) {
+	ENGINE.lightingBlend = fminf(fmaxf(blend, 0.0f), 1.0f);
+} 

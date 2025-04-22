@@ -95,7 +95,7 @@ void applyLighting(Particle* self) {
 		physicalBrightness += brightness;	
 	}
 	physicalBrightness /= ENGINE.lightCount;
-	self->brightness = velocityBrightness * 0.5f + physicalBrightness * 0.5f;
+	self->brightness = velocityBrightness * (1 - ENGINE.lightingBlend) + physicalBrightness * ENGINE.lightingBlend;
 }
 
 void lerpColor(Particle* self) {

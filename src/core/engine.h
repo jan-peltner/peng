@@ -29,6 +29,7 @@ typedef struct {
 	size_t particleCount;
 	size_t particleCap;
 	char* oMap;
+	float lightingBlend;
 	// attractors
 	Attractor* attractors;
 	Attractor* mouseAttractor;
