@@ -86,7 +86,7 @@ void applyRepellentForce(Particle *self, char* oMap) {
 }
 
 void applyLighting(Particle* self) {
-	float physicalBrightness= 0.0f;
+	float physicalBrightness= 0.0f + AMBIENT_LIGHT;
 	float velocityBrightness = fminf(Vector2Length(self->vel) / MAX_SPEED, 1.0f);
 	for (size_t i = 0; i < ENGINE.lightCount; ++i) {
 		Light light = ENGINE.lights[i];
@@ -94,7 +94,9 @@ void applyLighting(Particle* self) {
 		float brightness = light.intensity / expf(normalizedDist * 5.0f);
 		physicalBrightness += brightness;	
 	}
-	physicalBrightness /= ENGINE.lightCount;
+	if (ENGINE.lightCount > 0) {
+		physicalBrightness /= ENGINE.lightCount;
+	}
 	self->brightness = velocityBrightness * (1 - ENGINE.lightingBlend) + physicalBrightness * ENGINE.lightingBlend;
 }
 
