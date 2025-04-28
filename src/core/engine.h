@@ -30,6 +30,12 @@ typedef struct {
 	size_t particleCap;
 	char* oMap;
 	float lightingBlend;
+	// particle keyframes
+	Keyframe kfs[KEYFRAME_MAX_COUNT];
+	size_t kfCount;
+	size_t kfIndex;
+	float kfTimer;
+	bool kfActive;
 	// attractors
 	Attractor* attractors;
 	Attractor* mouseAttractor;

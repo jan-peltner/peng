@@ -2,6 +2,7 @@
 #include "physics.h"
 #include "raymath.h"
 #include <math.h>
+#include <stdio.h>
 
 float normalizedDistanceTo(const Particle* self, Vector2 to, float winDiag) {
 	Vector2 delta = Vector2Subtract(to, self->pos);
@@ -85,6 +86,12 @@ void applyRepellentForce(Particle *self, char* oMap) {
 	}		
 }
 
+void applyKeyframeForce(Particle* self) {
+	Keyframe* kf = &ENGINE.kfs[ENGINE.kfIndex];
+	Vector2 force = Vector2Scale(unitVectorTo(self, self->kfPos[self->kfIndex]), kf->force);
+	self->accel = Vector2Add(self->accel, force);
+}
+
 void applyLighting(Particle* self) {
 	float physicalBrightness= 0.0f + AMBIENT_LIGHT;
 	float velocityBrightness = fminf(Vector2Length(self->vel) / MAX_SPEED, 1.0f);
@@ -124,6 +131,10 @@ void* runMtPhysUpdate(void* arg) {
 
 		if (ENGINE.useRepellentForce) {
 			applyRepellentForce(&ENGINE.particles[i], ENGINE.oMap);
+		}
+
+		if (ENGINE.kfActive) {
+			applyKeyframeForce(&ENGINE.particles[i]);
 		}
 
 		// compute particle state

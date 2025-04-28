@@ -1,3 +1,4 @@
+#include "entities.h"
 #include "engine.h"
 #include "raymath.h"
 #include "../peng.h"
@@ -20,7 +21,8 @@ void spawnParticleAt(size_t x, size_t y, Color lowVelColor, Color highVelColor) 
 		.vel = Vector2Zero(),
 		.accel = Vector2Zero(),
 		.lowColor = lowVelColor,
-		.highColor = highVelColor
+		.highColor = highVelColor,
+		.kfIndex = (size_t)-1,
 	};
 
 	++ENGINE.particleCount;
@@ -51,6 +53,33 @@ void spawnParticlesFromImage(Image* img, Vector2 origin, size_t sampleStride, Co
 	}	
 
 	UnloadImageColors(imgColors);
+}
+
+bool pushParticleKeyframe(float kfDuration, float kfForce) {
+	if (ENGINE.kfCount >= KEYFRAME_MAX_COUNT) return false;
+	
+	Keyframe kf = {.force = kfForce, .duration = kfDuration};
+	ENGINE.kfs[ENGINE.kfCount] = kf;
+
+	for (size_t i = 0; i < ENGINE.particleCount; ++i) {
+		ENGINE.particles[i].kfPos[ENGINE.kfCount] = ENGINE.particles[i].pos;
+	}
+
+	++ENGINE.kfCount;
+	return true;
+}
+
+void dispatchParticleKeyframe(void* _) {
+	++ENGINE.kfIndex;
+	if (ENGINE.kfIndex >= ENGINE.kfCount) return; 
+
+	for (size_t i = 0; i < ENGINE.particleCount; ++i) {
+		ENGINE.particles[i].kfIndex++;
+		if (ENGINE.particles[i].kfIndex >= ENGINE.kfCount) return; 
+	}
+	printf("dispatched particle kf\n");
+
+	ENGINE.kfActive = true;
 }
 
 // attractors

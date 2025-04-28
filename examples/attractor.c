@@ -4,7 +4,6 @@
 
 #define WINDOW_WIDTH 1440 
 #define WINDOW_HEIGHT 900 
-#define PENG_LOG
 
 int main(void) {
 	int fps;

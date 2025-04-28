@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include <raymath.h>
 #include "../src/peng.h"
 
 #define WINDOW_WIDTH 1440 
@@ -20,13 +21,16 @@ int main(void) {
 	Image img  = LoadImage("../assets/neon-flower.jpg");
 	spawnParticlesFromImage(&img, (Vector2){.x = WINDOW_WIDTH / 2 - img.width / 2, .y = WINDOW_HEIGHT / 2 - img.height / 2}, 2, BLACK);	
 
-	setLightingBlend(1.0f);	
-	toggleRepellentForce();
-	// toggleParticlesFrozen();
-	// createMouseAttractor(2.0f, 0.33f);
-	// createMouseLight(1.0f);
+	pushParticleKeyframe(10.0f, 100.0f);
 
-	// DisableCursor();
+	Event events[] = {
+		(Event) {.dispatchAt = 3.0f, .fn = dispatchParticleKeyframe, .eventData = NULL}
+	};
+	scheduleEvents(events, PENG_ARRAY_LEN(events));
+	spawnStaticLight((Vector2){.x = WINDOW_WIDTH / 2 - img.width / 2, .y = WINDOW_HEIGHT / 2 - img.height / 2}, 5.0f);
+	createMouseAttractor(1.0f, 0.33f);
+	toggleAttractorForce();
+	toggleRepellentForce();
 
 	while (!WindowShouldClose()) {
 		float dt = GetFrameTime();

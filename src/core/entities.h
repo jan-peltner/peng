@@ -5,10 +5,19 @@
 #include <raylib.h>
 #include "../peng.h"
 
+#define KEYFRAME_MAX_COUNT 10
+
+typedef struct {
+	float force;
+	float duration;
+} Keyframe; 
+
 typedef struct {
 	Vector2 pos; 
 	Vector2 vel;
 	Vector2 accel;
+	Vector2 kfPos[KEYFRAME_MAX_COUNT];
+	size_t kfIndex;
 	float brightness;
 	Color lowColor;
 	Color highColor;

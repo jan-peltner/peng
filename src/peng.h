@@ -37,6 +37,8 @@ void spawnParticleAt(size_t x, size_t y, Color lowVelColor, Color highVelColor);
 void spawnParticlesRandom(const Color* lowVelColors, size_t lowVelColorsCount, const Color* highVelColors, size_t highVelColorsCount);
 void spawnParticlesFromImage(Image* img, Vector2 origin, size_t sampleStride, Color lowVelColor);
 void setLightingBlend(float blend); // blend between 0..1. towards 0 -> increase velocity lighting; towards 1 -> increase physical lighting
+bool pushParticleKeyframe(float kfDuration, float kfForce);
+void dispatchParticleKeyframe(void* _);
 
 // attractors
 

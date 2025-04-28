@@ -39,8 +39,7 @@ void startPeng(int winW, int winH, size_t particleCap, size_t attractorCap, size
 	}
 
 	ENGINE.scheduler = (Scheduler) {
-		.events = events,
-		.eventCount = 0,
+		.events = events, .eventCount = 0,
 		.eventCap = 64,
 		.eventCursor = 0
 	};
@@ -70,6 +69,12 @@ void startPeng(int winW, int winH, size_t particleCap, size_t attractorCap, size
 
 	// initialize oMap with 0's
 	oMapClear(ENGINE.oMap);
+
+	// initialize keyframes
+	ENGINE.kfCount = 0;
+	ENGINE.kfIndex = (size_t)-1;
+	ENGINE.kfTimer = 0;
+	ENGINE.kfActive = false;
 
 	// alloc attractors
 	Attractor* attractors = malloc(attractorCap * sizeof(Attractor));
@@ -131,6 +136,13 @@ void stopPeng() {
 void runUpdate(float dt) {
 	ENGINE.time += dt;
 	pollScheduler();
+	
+	if (ENGINE.kfActive) {
+		ENGINE.kfTimer += dt;
+		if (ENGINE.kfTimer >= ENGINE.kfs[ENGINE.kfIndex].duration) {
+			ENGINE.kfActive = false;
+		}
+	}
 
 	size_t  particlesPerThread = ENGINE.particleCount / THREAD_COUNT;
 	oMapClear(ENGINE.oMap);
