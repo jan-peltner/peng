@@ -44,6 +44,7 @@ void dispatchParticleKeyframe(void* _);
 
 AttractorId createMouseAttractor(float gravity, float rotationCoeff);
 AttractorId spawnStaticAttractor(Vector2 origin, float gravity, float rotationCoeff);
+AttractorId spawnStaticAttractorCenter(float gravity, float rotationCoeff);
 AttractorId spawnAnimatedAttractor(const Vector2* animationPath, size_t pathLen, float totalAnimationTime, bool isLooping, LoopMode loopMode, float gravity, float rotationCoeff);
 void toggleAttractor(AttractorId id);
 
@@ -51,6 +52,7 @@ void toggleAttractor(AttractorId id);
 
 LightId createMouseLight(float intensity);
 LightId spawnStaticLight(Vector2 origin, float intensity);
+LightId spawnStaticLightCenter(float intensity);
 LightId spawnAnimatedLight(const Vector2* animationPath, size_t pathLen, float totalAnimationTime, bool isLooping, LoopMode loopMode, float gravity);
 void toggleLight(LightId id);
 

@@ -120,6 +120,7 @@ AttractorId spawnAnimatedAttractor(const Vector2* animationPath, size_t pathLen,
 	return ATTRACTOR_ID++;
 }
 
+
 AttractorId spawnStaticAttractor(Vector2 origin, float gravity, float rotationCoeff) {
 	if (ENGINE.attractorCount >= ENGINE.attractorCap) {
 		TraceLog(LOG_WARNING, "[PENG] Attractor capacity maxed out");
@@ -142,6 +143,14 @@ AttractorId spawnStaticAttractor(Vector2 origin, float gravity, float rotationCo
 	};
 
 	return ATTRACTOR_ID++;
+}
+
+AttractorId spawnStaticAttractorCenter(float gravity, float rotationCoeff) {
+	Vector2 center = {
+		.x = ENGINE.winWidth / 2,
+		.y = ENGINE.winHeight / 2
+	};
+	return spawnStaticAttractor(center, gravity, rotationCoeff);
 }
 
 Attractor* findAttractorById(AttractorId id) {
@@ -212,6 +221,14 @@ LightId spawnStaticLight(Vector2 origin, float intensity) {
 	};
 
 	return LIGHT_ID++;
+}
+
+LightId spawnStaticLightCenter(float intensity){
+	Vector2 center = {
+		.x = ENGINE.winWidth / 2,
+		.y = ENGINE.winHeight / 2
+	};
+	return spawnStaticLight(center, intensity);
 }
 
 LightId createMouseLight(float intensity) {

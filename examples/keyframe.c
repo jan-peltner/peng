@@ -27,7 +27,7 @@ int main(void) {
 		(Event) {.dispatchAt = 3.0f, .fn = dispatchParticleKeyframe, .eventData = NULL}
 	};
 	scheduleEvents(events, PENG_ARRAY_LEN(events));
-	spawnStaticLight((Vector2){.x = WINDOW_WIDTH / 2 - img.width / 2, .y = WINDOW_HEIGHT / 2 - img.height / 2}, 5.0f);
+	spawnStaticLightCenter(5.0f);
 	createMouseAttractor(1.0f, 0.33f);
 	toggleAttractorForce();
 	toggleRepellentForce();
