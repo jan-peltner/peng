@@ -77,7 +77,6 @@ void dispatchParticleKeyframe(void* _) {
 		ENGINE.particles[i].kfIndex++;
 		if (ENGINE.particles[i].kfIndex >= ENGINE.kfCount) return; 
 	}
-	printf("dispatched particle kf\n");
 
 	ENGINE.kfActive = true;
 }

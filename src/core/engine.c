@@ -141,6 +141,9 @@ void runUpdate(float dt) {
 		ENGINE.kfTimer += dt;
 		if (ENGINE.kfTimer >= ENGINE.kfs[ENGINE.kfIndex].duration) {
 			ENGINE.kfActive = false;
+
+			// reset timer for next keyframe
+			ENGINE.kfTimer = 0;
 		}
 	}
 
