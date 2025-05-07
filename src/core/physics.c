@@ -1,22 +1,9 @@
 #include "engine.h"
 #include "physics.h"
 #include "raymath.h"
+#include "utils.h"
 #include <math.h>
 #include <stdio.h>
-
-float normalizedDistanceTo(const Particle* self, Vector2 to, float winDiag) {
-	Vector2 delta = Vector2Subtract(to, self->pos);
-	return sqrtf(delta.x * delta.x + delta.y * delta.y) / winDiag;
-}
-
-Vector2 unitVectorTo(const Particle* self, Vector2 to) {
-	Vector2 delta = Vector2Subtract(to, self->pos);
-	float length = sqrtf(delta.x * delta.x + delta.y * delta.y);
-	return (Vector2) {
-		.x = delta.x / length,
-		.y = delta.y / length
-	};
-}
 
 void applyVel(Particle* self, float dt) {
 	float newX = self->pos.x + self->vel.x * dt;
@@ -42,10 +29,10 @@ void applyAccel(Particle* self, float dt) {
 void applyAttractorForce(Particle* self, Attractor* attractor, float winDiag) {
 	if (!attractor->isActive) return;
 
-	Vector2 direction = unitVectorTo(self, attractor->pos);
+	Vector2 direction = unitVectorTo(self->pos, attractor->pos);
 	Vector2 normalVec = Vector2Rotate(direction, PI/2);
 
-	float normalizedDist = normalizedDistanceTo(self, attractor->pos, winDiag);
+	float normalizedDist = normalizedDistanceTo(self->pos, attractor->pos, winDiag);
 	float gravityForceMag = attractor->gravity / ((normalizedDist * normalizedDist) + EPSILON);
 	float rotationForceMag = attractor->gravity * 0.33f / ((normalizedDist * normalizedDist) + EPSILON);
 
@@ -86,9 +73,8 @@ void applyRepellentForce(Particle *self, char* oMap) {
 	}		
 }
 
-void applyKeyframeForce(Particle* self) {
-	Keyframe* kf = &ENGINE.kfs[ENGINE.kfIndex];
-	Vector2 force = Vector2Scale(unitVectorTo(self, self->kfPos[self->kfIndex]), kf->force);
+void applyKeyframeForce(Particle* self, float scaledKfForce) {
+	Vector2 force = Vector2Scale(unitVectorTo(self->pos, self->kfPos[self->kfIndex]), scaledKfForce);
 	self->accel = Vector2Add(self->accel, force);
 }
 
@@ -97,7 +83,7 @@ void applyLighting(Particle* self) {
 	float velocityBrightness = fminf(Vector2Length(self->vel) / MAX_SPEED, 1.0f);
 	for (size_t i = 0; i < ENGINE.lightCount; ++i) {
 		Light light = ENGINE.lights[i];
-		float normalizedDist = normalizedDistanceTo(self, light.pos, ENGINE.winDiag);	
+		float normalizedDist = normalizedDistanceTo(self->pos, light.pos, ENGINE.winDiag);	
 		float brightness = light.intensity / expf(normalizedDist * 5.0f);
 		physicalBrightness += brightness;	
 	}
@@ -134,7 +120,7 @@ void* runMtPhysUpdate(void* arg) {
 		}
 
 		if (ENGINE.kfActive) {
-			applyKeyframeForce(&ENGINE.particles[i]);
+			applyKeyframeForce(&ENGINE.particles[i], tData->scaledKfForce);
 		}
 
 		// compute particle state

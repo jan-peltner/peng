@@ -15,6 +15,7 @@ typedef struct {
 	size_t start;
 	size_t end;
 	float dt;
+	float scaledKfForce;
 } ThreadData;
 
 typedef struct {

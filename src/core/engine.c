@@ -137,11 +137,17 @@ void runUpdate(float dt) {
 	ENGINE.time += dt;
 	pollScheduler();
 	
+	float scaledKfForce = 0.0f;
 	if (ENGINE.kfActive) {
 		ENGINE.kfTimer += dt;
-		if (ENGINE.kfTimer >= ENGINE.kfs[ENGINE.kfIndex].duration) {
-			ENGINE.kfActive = false;
 
+		Keyframe* kf = &ENGINE.kfs[ENGINE.kfIndex];
+		float progress = ENGINE.kfTimer / kf->duration;
+		float eased = 1 - sineEaseOut(progress);
+
+		scaledKfForce = kf->force * eased;
+		if (ENGINE.kfTimer >= kf->duration) {
+			ENGINE.kfActive = false;
 			// reset timer for next keyframe
 			ENGINE.kfTimer = 0;
 		}
@@ -173,6 +179,7 @@ void runUpdate(float dt) {
 		ENGINE.threadData[t].start = t * particlesPerThread;
 		ENGINE.threadData[t].end = (t == THREAD_COUNT - 1) ? ENGINE.particleCount : (t + 1) * particlesPerThread;
 		ENGINE.threadData[t].dt = dt; 
+		ENGINE.threadData[t].scaledKfForce = scaledKfForce; 
 		pthread_create(&ENGINE.threads[t], NULL, runMtPhysUpdate, &ENGINE.threadData[t]);
 	}	
 
